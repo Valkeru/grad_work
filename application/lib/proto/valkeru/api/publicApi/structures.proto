@@ -1,0 +1,9 @@
+syntax = 'proto3';
+
+package valkeru.api.publicApi.structures;
+option php_namespace = "Valkeru\\PublicApi\\Structures";
+import "google/api/annotations.proto";
+
+message DummyMessage {
+
+}

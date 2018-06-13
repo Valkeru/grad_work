@@ -1,0 +1,47 @@
+syntax = 'proto3';
+
+package valkeru.api.publicApi.registration;
+option php_namespace = "Valkeru\\PublicApi\\Registration";
+import "google/api/annotations.proto";
+
+service RegistrationService {
+    rpc register (RegistrationRequest) returns (RegistrationResponse) {
+        option (google.api.http) = {
+            post: "/v1/register"
+            body: "*"
+        };
+    }
+}
+
+message RegistrationRequest {
+    string name = 1;
+    string surname = 2;
+    string login = 3;
+    string email = 4;
+    string phone = 5;
+    string password = 6;
+}
+
+message RegistrationResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        uint32 user_id = 1;
+        string token = 2;
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+            INTERNAL_ERROR = 1;
+            USER_ALREADY_EXISTS = 2;
+            PASSWORD_TOO_WEAK = 3;
+        }
+    }
+}

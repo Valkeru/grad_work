@@ -1,0 +1,45 @@
+syntax = 'proto3';
+
+package valkeru.api.privateApi.employee;
+option php_namespace = "Valkeru\\PrivateApi\\Employee";
+import "google/api/annotations.proto";
+import "valkeru/api/privateApi/structures.proto";
+
+//Все методы сервиса, кроме регистрации суперадминистратора, требуют токен в Authorization
+service EmployeeService {
+    //Метод вызывается только при запуске проекта
+    //Наличие супер-администратора подразумевает, что приложение полностью готово
+    //После этого возможно создание новых сотрудников, клиентов и т.д.
+    rpc registerSuperAdmin (structures.DummyMessage) returns (structures.DummyMessage) {
+        option (google.api.http) = {
+            put: "/create-super-admin"
+            body: "*"
+        };
+    }
+
+    rpc createEmployee (structures.DummyMessage) returns (structures.DummyMessage) {
+        option (google.api.http) = {
+            put: "/employee"
+            body: "*"
+        };
+    }
+
+    rpc editEmployee (structures.DummyMessage) returns (structures.DummyMessage) {
+        option (google.api.http) = {
+            patch: "/employee/{id}"
+            body: "*"
+        };
+    }
+
+    rpc blockEmployee (structures.DummyMessage) returns (structures.DummyMessage) {
+        option (google.api.http) = {
+            post: "/employee/{id}"
+        };
+    }
+
+    rpc employeeInfo (structures.DummyMessage) returns (structures.DummyMessage) {
+        option (google.api.http) = {
+            get: "/employee/{id}"
+        };
+    }
+}

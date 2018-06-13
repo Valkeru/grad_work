@@ -1,0 +1,8 @@
+syntax = 'proto3';
+
+package valkeru.api.privateApi.structures;
+option php_namespace = "Valkeru\\PrivateApi\\Structures";
+
+message DummyMessage {
+
+}

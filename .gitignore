@@ -1,0 +1,11 @@
+.idea/
+###> symfony/framework-bundle ###
+/application/public/bundles/
+/application/var/*
+!/application/var/.gitkeep
+/application/vendor/
+/application/.composer/
+###< symfony/framework-bundle ###
+/application/lib/api/*
+!/application/lib/api/.gitkeep
+docker/build-grpc

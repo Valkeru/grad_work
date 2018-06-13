@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  webapp:
+    build: .
+    volumes:
+      - ../application:/var/www
+      - ./xdebug.ini:/etc/php/7.2/mods-available/xdebug.ini
+      - ./build-grpc:/tmp/build-grpc
+    env_file:
+      - ../application/.env
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - 8000:80
+    volumes:
+      - ../application:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - mysql_data:/var/lib/mysql
+    env_file:
+      - ../application/.env
+
+volumes:
+  mysql_data: {}

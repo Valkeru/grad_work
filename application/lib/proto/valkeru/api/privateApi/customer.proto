@@ -1,0 +1,31 @@
+syntax = 'proto3';
+
+package valkeru.api.privateApi.customer;
+option php_namespace = "Valkeru\\PrivateApi\\Custromer";
+import "google/api/annotations.proto";
+import "valkeru/api/privateApi/structures.proto";
+
+
+//Все методы требуют наличия токена в Authorization
+service CustomerService {
+    rpc newCustomer (structures.DummyMessage) returns (structures.DummyMessage) {
+        option (google.api.http) = {
+            put: "/customer"
+            body: "/"
+        };
+    }
+
+    //Один метод для блокировки и разблокировки
+    rpc switchAccountState (structures.DummyMessage) returns (structures.DummyMessage) {
+        option (google.api.http) = {
+            post: "/customer/{id}"
+        };
+    }
+
+    rpc editCustomer (structures.DummyMessage) returns (structures.DummyMessage) {
+        option (google.api.http) = {
+            patch: "/customer/{id}"
+            body: "*"
+        };
+    }
+}
