@@ -8,19 +8,14 @@
 
 namespace App\Controller\PublicApi;
 
-use App\Entity\Test;
-use App\Kernel;
 use App\Service\AuthorizationService;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Token;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class AuthController
@@ -48,7 +43,7 @@ class AuthController extends Controller
     }
 
     /**
-     * @route("")
+     * @Route("")
      */
     public function actionIndex(Request $request)
     {

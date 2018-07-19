@@ -8,6 +8,7 @@ parameters:
     app.public.private_key: '%kernel.project_dir%/keys/publicApi/private.key'
     app.private.public_key: '%kernel.project_dir%/keys/privateApi/public.key'
     app.private.private_key: '%kernel.project_dir%/keys/privateApi/private.key'
+    app.public_enabled: false
 
 services:
     # default configuration for services in *this* file
@@ -41,6 +42,7 @@ services:
         calls:
           - [setHost, ['%app.public_host%']]
           - [setPublicKeyFile, ['%app.public.public_key%']]
+          - [setContainer, ['@service_container']]
 
 
 #    App\EventSubscriber\:

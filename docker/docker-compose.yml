@@ -6,9 +6,11 @@ services:
     volumes:
       - ../application:/var/www
       - ./xdebug.ini:/etc/php/7.2/mods-available/xdebug.ini
-      - ./build-grpc:/tmp/build-grpc
     env_file:
       - ../application/.env
+    environment:
+#       PhpStorm
+      PHP_IDE_CONFIG: "serverName=grad_api"
 
   nginx:
     image: nginx:latest

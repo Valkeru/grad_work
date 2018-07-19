@@ -6,3 +6,13 @@ option php_namespace = "Valkeru\\PrivateApi\\Structures";
 message DummyMessage {
 
 }
+
+message Employee {
+    uint32 id = 1;
+    string login = 2;
+    string name = 3;
+    string email = 4;
+    string department = 5;
+    string position = 6;
+    string state = 7;
+}

@@ -10,9 +10,8 @@ namespace App\Controller\PublicApi;
 
 use Lcobucci\JWT\Signer\Key;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class SecurityController
@@ -23,12 +22,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class SecurityController extends Controller
 {
     /**
-     * @Route("/security")
-     * @Method("GET")
+     * @Route("/security", methods={"GET"})
      */
     public function getPublicKey()
     {
-        $key = new Key('file://' . $this->get('kernel')->getProjectDir() . '/keys/public.key');
+        $key = new Key('file://' . $this->getParameter('app.public.public_key'));
 
         return new JsonResponse([
             'key' => $key->getContent()

@@ -9,8 +9,8 @@
 namespace App\Controller\PublicApi;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class RegistrationController
@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class RegistrationController extends Controller
 {
     /**
-     * @route("")
+     * @Route("")
      */
     public function actionIndex()
     {

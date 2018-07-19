@@ -8,7 +8,8 @@
 
 namespace App\Controller\PrivateApi;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use App\Entity\Employee;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +29,17 @@ class AdminController extends Controller
      */
     public function createSuperAdminAction(Request $request): Response
     {
+        $admin = new Employee();
+        $admin->setLogin('')->setPassword('')
+            ->setStatus(Employee::STATUS_WORKING)
+            ->setEmail('valkeru@valkeru.ru')
+            ->setIsAdmin(true)
+            ->setDepartment(Employee::DEPARTMENT_DEV)
+            ->setPosition(Employee::POSITION_CODER);
+
+        $this->getDoctrine()->getManager()->persist($admin);
+        $this->getDoctrine()->getManager()->flush();
+
         return new Response();
     }
 }

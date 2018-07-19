@@ -13,20 +13,8 @@ use Doctrine\ORM\EntityRepository;
 
 abstract class BaseEntity
 {
-    /**
-     * @var EntityManager
-     */
-    private static $em;
-
-    public function setEm(EntityManager $em): void
+    public static function find(EntityManager $em): EntityRepository
     {
-        if (self::$em === NULL) {
-            self::$em = $em;
-        }
-    }
-
-    public static function find(): EntityRepository
-    {
-        return self::$em->getRepository(self::class);
+        return $em->getRepository(self::class);
     }
 }

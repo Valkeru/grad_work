@@ -8,10 +8,9 @@
 
 namespace App\Controller\PrivateApi;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class EmployeeController
@@ -23,8 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 class EmployeeController extends Controller
 {
     /**
-     * @Route("")
-     * @Method("PUT")
+     * @Route("", methods={"PUT"})
      *
      * @return Response
      */
@@ -34,8 +32,7 @@ class EmployeeController extends Controller
     }
 
     /**
-     * @Route("/{id}", requirements={"id"="\d+"})
-     * @Method("PATCH")
+     * @Route("/{id}", requirements={"id"="\d+"}, methods={"PATCH"})
      *
      * @return Response
      */
@@ -45,8 +42,7 @@ class EmployeeController extends Controller
     }
 
     /**
-     * @Route("/{id}", requirements={"id"="\d+"})
-     * @Method("POST")
+     * @Route("/{id}", requirements={"id"="\d+"}, methods={"POST"})
      *
      * @return Response
      */
@@ -56,8 +52,7 @@ class EmployeeController extends Controller
     }
 
     /**
-     * @Route("/{id}", requirements={"id"="\d+"})
-     * @Method("GET")
+     * @Route("/{id}", requirements={"id"="\d+"}, methods={"GET"})
      *
      * @return Response
      */

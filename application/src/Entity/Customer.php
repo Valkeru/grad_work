@@ -8,6 +8,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Base\BaseEntity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,11 +16,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Class Customer
  *
  * @package App\Entity
+ * @method \App\Repository\CustomerRepository find(\Doctrine\ORM\EntityManager $entityManager)
  *
  * @ORM\Table(name="customers")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
  */
-class Customer
+class Customer extends BaseEntity
 {
     /**
      * @var int

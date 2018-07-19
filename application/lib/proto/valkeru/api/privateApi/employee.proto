@@ -10,14 +10,14 @@ service EmployeeService {
     //Метод вызывается только при запуске проекта
     //Наличие супер-администратора подразумевает, что приложение полностью готово
     //После этого возможно создание новых сотрудников, клиентов и т.д.
-    rpc registerSuperAdmin (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc registerSuperAdmin (CreateSuperAdminRequest) returns (CreateSuperAdminResponse) {
         option (google.api.http) = {
             put: "/create-super-admin"
             body: "*"
         };
     }
 
-    rpc createEmployee (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc createEmployee (CreateEmployeeRequest) returns (CreateEmployeeResponse) {
         option (google.api.http) = {
             put: "/employee"
             body: "*"
@@ -31,15 +31,114 @@ service EmployeeService {
         };
     }
 
-    rpc blockEmployee (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc blockEmployee (BlockEmployeeRequest) returns (structures.DummyMessage) {
         option (google.api.http) = {
             post: "/employee/{id}"
         };
     }
 
-    rpc employeeInfo (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc employeeInfo (EmployeeInfoRequest) returns (structures.DummyMessage) {
         option (google.api.http) = {
             get: "/employee/{id}"
         };
+    }
+}
+
+message CreateSuperAdminRequest {
+    string login = 1;
+    string password = 2;
+    string emailLogin = 3;
+    string name = 4;
+}
+
+message CreateSuperAdminResponse {
+    oneof response {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        structures.Employee = 1;
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+            INTERNAL_ERROR = 1;
+            ADMIN_ACCOUNTS_ALREADY_EXISTS = 2;
+            PASSWORD_TOO_SHORT = 3;
+            INVALID_PASSWORD = 4;
+            INVALID_LOGIN = 5;
+        }
+    }
+}
+
+message CreateEmployeeRequest {
+    string login = 1;
+    string password = 2;
+    string emailLogin = 3;
+    string name = 4;
+    string department = 5;
+    string position = 6;
+}
+
+message CreateEmployeeResponse {
+    oneof response {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        structures.Employee = 1;
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+        }
+    }
+}
+
+message BlockEmployeeRequest {
+    uint32 id = 1;
+}
+
+message BlockEmployeeResponse {
+    oneof response {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+
+    }
+
+    message Error {
+
+    }
+}
+
+message EmployeeInfoRequest {
+    uint32 id = 1;
+}
+
+message EmployeeInfoResponse {
+    oneof response {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+
+    }
+
+    message Error {
+
     }
 }

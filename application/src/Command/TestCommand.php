@@ -31,20 +31,6 @@ class TestCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $z = new Customer();
-        $z->setPassword(md5('123'))->setEmail('qwe')->setPhone('ddsfsd')->setName('z');
-        /** @var ConstraintViolationList $violationList */
-        $violationList = $this->validator->validate($z);
-
-        if (\count($violationList) > 0) {
-            $violationMessage = '';
-            foreach ($violationList as $violation) {
-                $violationMessage .= $violation->getMessage() . PHP_EOL;
-            }
-
-            throw new ValidatorException($violationMessage);
-        }
-
-        usleep(1);
+        $output->writeln('Hello');
     }
 }

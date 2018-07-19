@@ -8,8 +8,36 @@
 
 namespace App\Entity;
 
-class Worker
+use App\Entity\Base\BaseEntity;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Class Worker
+ *
+ * @package App\Entity
+ * @method \App\Repository\EmployeeRepository find(\Doctrine\ORM\EntityManager $entityManager)
+ *
+ * @ORM\Table(name="workers")
+ * @ORM\Entity(repositoryClass="App\Repository\EmployeeRepository")
+ */
+class Employee extends BaseEntity
 {
+    public const STATUS_PROBATION = 'probation';
+    public const STATUS_WORKING   = 'working';
+    public const STATUS_FIRED     = 'fired';
+
+    public const POSITION_SUPPORT = 'support';
+    public const POSITION_ADMIN   = 'admin';
+    public const POSITION_CODER   = 'coder';
+    public const POSITION_MANAGER = 'manager';
+    public const POSITION_DEVOPS  = 'devops';
+
+    public const DEPARTMENT_SUPPORT = 'support';
+    public const DEPARTMENT_ADMIN   = 'admin';
+    public const DEPARTMENT_DEV     = 'development';
+    public const DEPARTMENT_MANAGER = 'manager';
+    public const DEPARTMENT_BILL    = 'bill';
+
     /**
      * @var int
      */
@@ -33,6 +61,11 @@ class Worker
     /**
      * @var string
      */
+    private $name;
+
+    /**
+     * @var string
+     */
     private $department;
 
     /**
@@ -43,7 +76,7 @@ class Worker
     /**
      * @var string
      */
-    private $status = 'probation';
+    private $status = self::STATUS_PROBATION;
 
     /**
      * @var bool
@@ -66,7 +99,7 @@ class Worker
     /**
      * @param string $login
      *
-     * @return Worker
+     * @return Employee
      */
     public function setLogin(string $login): self
     {
@@ -78,17 +111,9 @@ class Worker
     }
 
     /**
-     * @return string
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    /**
      * @param string $password
      *
-     * @return Worker
+     * @return Employee
      */
     public function setPassword(string $password): self
     {
@@ -108,7 +133,7 @@ class Worker
     /**
      * @param string $email
      *
-     * @return Worker
+     * @return Employee
      */
     public function setEmail(string $email): self
     {
@@ -130,7 +155,7 @@ class Worker
     /**
      * @param string $department
      *
-     * @return Worker
+     * @return Employee
      */
     public function setDepartment(string $department): self
     {
@@ -150,7 +175,7 @@ class Worker
     /**
      * @param string $position
      *
-     * @return Worker
+     * @return Employee
      */
     public function setPosition(string $position): self
     {
@@ -170,7 +195,7 @@ class Worker
     /**
      * @param string $status
      *
-     * @return Worker
+     * @return Employee
      */
     public function setStatus(string $status): self
     {
@@ -190,11 +215,31 @@ class Worker
     /**
      * @param bool $isAdmin
      *
-     * @return Worker
+     * @return Employee
      */
     public function setIsAdmin(bool $isAdmin): self
     {
         $this->isAdmin = $isAdmin;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return Employee
+     */
+    public function setName(string $name): Employee
+    {
+        $this->name = $name;
 
         return $this;
     }
