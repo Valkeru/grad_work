@@ -11,6 +11,7 @@ namespace App\Entity;
 use App\Entity\Base\BaseEntity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class Customer
@@ -21,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="customers")
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
  */
-class Customer extends BaseEntity
+class Customer extends BaseEntity implements UserInterface
 {
     /**
      * @var int
@@ -37,7 +38,7 @@ class Customer extends BaseEntity
      *
      * @ORM\Column(name="login", type="string", nullable=false, unique=true)
      * @Assert\NotBlank()
-     * @Assert\Regex('/[a-z0-9]+/')
+     * @Assert\Regex("/[a-z0-9]+/")
      */
     private $login;
 
@@ -190,5 +191,33 @@ class Customer extends BaseEntity
         $this->password = password_hash($password, PASSWORD_BCRYPT);
 
         return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getRoles(): array
+    {
+        return ['ROLE_CUSTOMER'];
+    }
+
+    /**
+     * @return null
+     */
+    public function getSalt()
+    {
+        return NULL;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->getLogin();
+    }
+
+    public function eraseCredentials(): void
+    {
     }
 }

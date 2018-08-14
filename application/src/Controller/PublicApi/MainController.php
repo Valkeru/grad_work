@@ -20,9 +20,9 @@ class MainController extends Controller
     }
     /**
      * @return Response
-     * @Route("/register")
+     * @Route("/")
      */
-    public function actionRegister()
+    public function actionIndex()
     {
         return new Response();
     }

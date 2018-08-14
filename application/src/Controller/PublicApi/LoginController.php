@@ -25,7 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @route("/login")
  * @method("POST")
  */
-class AuthController extends Controller
+class LoginController extends Controller
 {
     /**
      * @var AuthorizationService
@@ -54,7 +54,7 @@ class AuthController extends Controller
             ->setIssuedAt($now->getTimestamp())
             ->setExpiration($until->getTimestamp())
             ->set('userId', '')
-            ->set('userName', '')
+            ->set('userName', 'valkeru')
             ->sign(new Sha256(), $privateKey)
             ->getToken()
         ;

@@ -10,6 +10,7 @@ namespace App\Entity;
 
 use App\Entity\Base\BaseEntity;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class Worker
@@ -20,7 +21,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="workers")
  * @ORM\Entity(repositoryClass="App\Repository\EmployeeRepository")
  */
-class Employee extends BaseEntity
+class Employee extends BaseEntity implements UserInterface
 {
     public const STATUS_PROBATION = 'probation';
     public const STATUS_WORKING   = 'working';
@@ -40,6 +41,10 @@ class Employee extends BaseEntity
 
     /**
      * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id()
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
@@ -242,5 +247,47 @@ class Employee extends BaseEntity
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getRoles(): array
+    {
+        if ($this->isAdmin) {
+            return ['ROLE_ADMIN'];
+        }
+
+        return ['ROLE_EMPLOYEE'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->getLogin();
+    }
+
+    /**
+     * Пароли сотрудников не должны быть доступны в коде
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return '';
+    }
+
+    /**
+     * @return null
+     */
+    public function getSalt()
+    {
+        return NULL;
+    }
+
+    public function eraseCredentials(): void
+    {
     }
 }
