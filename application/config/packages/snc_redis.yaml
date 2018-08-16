@@ -1,0 +1,15 @@
+# See https://github.com/snc/SncRedisBundle/blob/master/Resources/doc/index.md for instructions on
+# how to configure the bundle.
+
+snc_redis:
+    clients:
+        default:
+            type: predis
+            alias: default
+            dsn: "%env(REDIS_URL)%"
+        token_blacklist:
+            type: predis
+            alias: token_blacklist
+            dsn: '%env(REDIS_URL)%'
+            options:
+                prefix: token_blacklist_for_customer_

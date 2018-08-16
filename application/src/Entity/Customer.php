@@ -10,6 +10,7 @@ namespace App\Entity;
 
 use App\Entity\Base\BaseEntity;
 use Doctrine\ORM\Mapping as ORM;
+use Lcobucci\JWT\Token;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -74,7 +75,7 @@ class Customer extends BaseEntity implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="password", type="string", length=60, nullable=false)
+     * @ORM\Column(name="password", type="string", length=95, nullable=false)
      *
      * @Assert\Length(
      *     min=60,
@@ -84,6 +85,12 @@ class Customer extends BaseEntity implements UserInterface
      * @Assert\Regex(pattern="/^\$2y\$.{56}$/", message="Invalid password hash")
      */
     private $password;
+
+    /**
+     * JWT токен пользователя
+     * @var Token
+     */
+    private $credentials;
 
     /**
      * @return int
@@ -188,7 +195,7 @@ class Customer extends BaseEntity implements UserInterface
      */
     public function setPassword(string $password): self
     {
-        $this->password = password_hash($password, PASSWORD_BCRYPT);
+        $this->password = password_hash($password, PASSWORD_ARGON2I);
 
         return $this;
     }
@@ -202,8 +209,29 @@ class Customer extends BaseEntity implements UserInterface
     }
 
     /**
-     * @return null
+     * @return string
      */
+    public function __toString(): string
+    {
+        return $this->getLogin();
+    }
+
+    /**
+     * @return Token
+     */
+    public function getCredentials(): Token
+    {
+        return $this->credentials;
+    }
+
+    /**
+     * @param Token $credentials
+     */
+    public function setCredentials(?Token $credentials = NULL): void
+    {
+        $this->credentials = $credentials;
+    }
+
     public function getSalt()
     {
         return NULL;

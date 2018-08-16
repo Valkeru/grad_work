@@ -8,6 +8,7 @@
 
 namespace App\Security;
 
+use App\Entity\Customer;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
@@ -78,7 +79,9 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
             throw new UnauthorizedHttpException('');
         }
 
+        /** @var Customer $user */
         $user = $userProvider->loadUserByUsername($jwt->getClaim('userName'));
+        $user->setCredentials($jwt);
 
         return new PreAuthenticatedToken($user, $tokenString, $providerKey);
     }

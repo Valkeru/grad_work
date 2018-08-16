@@ -29,5 +29,13 @@ services:
     env_file:
       - ../application/.env
 
+  redis:
+    image: redis:4.0.11
+    ports:
+      - 63790:6379
+    volumes:
+      - redis_persistent:/data
+
 volumes:
   mysql_data: {}
+  redis_persistent: {}

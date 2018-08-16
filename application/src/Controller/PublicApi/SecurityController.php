@@ -10,8 +10,11 @@ namespace App\Controller\PublicApi;
 
 use Lcobucci\JWT\Signer\Key;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Class SecurityController

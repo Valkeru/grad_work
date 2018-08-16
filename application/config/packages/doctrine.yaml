@@ -14,7 +14,8 @@ doctrine:
         default_table_options:
             charset: '%env(DB_CHARSET)%'
             collate: '%env(DB_COLLATION)%'
-        url: '%env(resolve:DATABASE_URL)%'
+    #Урл из .env с переменными не переваривается в CLI, в итоге отваливаются действия с БД
+        url: 'mysql://%env(DB_USER)%:%env(MYSQL_ROOT_PASSWORD)%@%env(DB_HOST)%:%env(DB_PORT)%/%env(MYSQL_DATABASE)%'
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore

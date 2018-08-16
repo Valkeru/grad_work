@@ -8,22 +8,29 @@
 
 namespace App\Controller\PublicApi;
 
+use App\Entity\Customer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class MainController extends Controller
 {
-    public function __construct()
+    private $token;
+
+    public function __construct(ContainerInterface $container)
     {
-        usleep(1);
+        $this->token = $container->get('security.token_storage');
     }
+
     /**
      * @return Response
      * @Route("/")
      */
     public function actionIndex()
     {
+        /** @var Customer $u */
+        $u = $this->getUser();
         return new Response();
     }
 }
