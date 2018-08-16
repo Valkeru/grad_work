@@ -24,20 +24,26 @@ service EmployeeService {
         };
     }
 
-    rpc editEmployee (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc editEmployee (EditEmployeeRequest) returns (EditEmployeeResponse) {
         option (google.api.http) = {
             patch: "/employee/{id}"
             body: "*"
         };
     }
 
-    rpc blockEmployee (BlockEmployeeRequest) returns (structures.DummyMessage) {
+    rpc blockEmployee (BlockEmployeeRequest) returns (BlockEmployeeResponse) {
         option (google.api.http) = {
-            post: "/employee/{id}"
+            post: "/employee/{id}/block"
         };
     }
 
-    rpc employeeInfo (EmployeeInfoRequest) returns (structures.DummyMessage) {
+    rpc unblockEmployee (BlockEmployeeRequest) returns (BlockEmployeeResponse) {
+        option (google.api.http) = {
+            post: "/employee/{id}/unblock"
+        };
+    }
+
+    rpc employeeInfo (EmployeeInfoRequest) returns (EmployeeInfoResponse) {
         option (google.api.http) = {
             get: "/employee/{id}"
         };
@@ -58,7 +64,7 @@ message CreateSuperAdminResponse {
     }
 
     message Success {
-        structures.Employee = 1;
+        structures.Employee employee = 1;
     }
 
     message Error {
@@ -92,7 +98,7 @@ message CreateEmployeeResponse {
     }
 
     message Success {
-        structures.Employee = 1;
+        structures.Employee employee = 1;
     }
 
     message Error {
@@ -102,6 +108,34 @@ message CreateEmployeeResponse {
         enum Code {
             _ = 0;
         }
+    }
+}
+
+message EditEmployeeRequest {
+    string name = 1;
+    string department = 2;
+    string position = 3;
+}
+
+message EditEmployeeResponse {
+    oneof response {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        structures.Employee employee = 1;
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+    }
+
+    enum Code {
+        _ = 0;
+        NOT_FOUND = 1;
+        ACCESS_DENIED = 2;
     }
 }
 
@@ -115,12 +149,18 @@ message BlockEmployeeResponse {
         Error error = 2;
     }
 
-    message Success {
-
-    }
+    message Success {}
 
     message Error {
+        Code code = 1;
+        string message = 2;
+    }
 
+    enum Code {
+        _ = 0;
+        NOT_FOUND = 1;
+        ALREADY_BLOCKED = 2;
+        OPERATION_NOT_PERMITED = 3;
     }
 }
 
@@ -135,10 +175,16 @@ message EmployeeInfoResponse {
     }
 
     message Success {
-
+        structures.Employee employee = 1;
     }
 
     message Error {
+        Code code = 1;
+        string message = 2;
+    }
 
+    enum Code {
+        _ = 0;
+        NOT_FOUND = 1;
     }
 }

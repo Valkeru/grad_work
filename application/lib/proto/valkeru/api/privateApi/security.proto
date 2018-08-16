@@ -6,24 +6,11 @@ import "google/api/annotations.proto";
 import "valkeru/api/privateApi/structures.proto";
 
 //Аутентификация пользователей, действия с токенами, паролями и прочее
-//Все методы, кроме входа, требуют наличия токена в Authorization
+//Все методы требуют наличия токена в Authorization
 service SecurityService {
-    rpc login (structures.DummyMessage) returns (structures.DummyMessage) {
-        option (google.api.http) = {
-            post: "/login"
-            body: "*"
-        };
-    }
-
-    rpc logout (structures.DummyMessage) returns (structures.DummyMessage) {
-        option (google.api.http) = {
-            post: "/logout"
-        };
-    }
-
     rpc changePassword (structures.DummyMessage) returns (structures.DummyMessage) {
         option (google.api.http) = {
-            patch: "/password"
+            patch: "/security/password"
             body: "*"
         };
     }
@@ -31,7 +18,7 @@ service SecurityService {
     //Возвращает специальные короткоживущие токены для аутентификации с правами клиента
     rpc getCustomerToken (structures.DummyMessage) returns (structures.DummyMessage) {
         option (google.api.http) = {
-            get: "/customer-token/{id}"
+            get: "/security/customer-token/{id}"
         };
     }
 }

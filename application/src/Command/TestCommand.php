@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\AccountStatus;
 use App\Entity\Customer;
 use Predis\Client;
 use Ramsey\Uuid\Uuid;
@@ -36,16 +37,18 @@ class TestCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var Client $blackListRedis */
-        $blackListRedis      = $this->container->get('snc_redis.token_blacklist');
-        $blackListRedisCache = new RedisCache($blackListRedis);
+        $c = new Customer();
 
-        $blackListRedisCache->set('1', [
-            (string)Uuid::uuid4() => (new \DateTime())->add(new \DateInterval('P1W'))
-        ], 24 * 60 * 60 * 7);
+        $em = $this->container->get('doctrine.orm.default_entity_manager');
 
-        $data = $blackListRedisCache->get('1');
+        $c->setPassword('qwerty')
+            ->setLogin('valkeru')
+            ->setEmail('valkeru@valkeru.ru')
+            ->setName('Лис Накраман')
+            ->setPhone('+79312671953')
+        ;
 
-        return;
+        $em->persist($c);
+        $em->flush();
     }
 }

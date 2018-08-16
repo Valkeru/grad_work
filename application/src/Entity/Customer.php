@@ -22,6 +22,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @ORM\Table(name="customers")
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Customer extends BaseEntity implements UserInterface
 {
@@ -91,6 +92,23 @@ class Customer extends BaseEntity implements UserInterface
      * @var Token
      */
     private $credentials;
+
+    /**
+     * @var AccountStatus
+     * @ORM\OneToOne(targetEntity="App\Entity\AccountStatus", mappedBy="customer", cascade={"persist"})
+     */
+    private $accountStatus;
+
+    /**
+     * Customer constructor.
+     */
+    public function __construct()
+    {
+        //Связываем сущности между собой
+        //Иначе при персисте нового пользователя придётся отдельно персистить статус
+        $this->accountStatus = new AccountStatus();
+        $this->accountStatus->setCustomer($this);
+    }
 
     /**
      * @return int
@@ -195,9 +213,17 @@ class Customer extends BaseEntity implements UserInterface
      */
     public function setPassword(string $password): self
     {
-        $this->password = password_hash($password, PASSWORD_ARGON2I);
+        $this->password = password_hash($password, PASSWORD_ARGON2I, ['threads' => 4]);
 
         return $this;
+    }
+
+    /**
+     * @return AccountStatus
+     */
+    public function getAccountStatus(): AccountStatus
+    {
+        return $this->accountStatus;
     }
 
     /**
@@ -205,6 +231,10 @@ class Customer extends BaseEntity implements UserInterface
      */
     public function getRoles(): array
     {
+        if ($this->accountStatus->isBlocked()) {
+            return ['ROLE_CUSTOMER_BLOCKED'];
+        }
+
         return ['ROLE_CUSTOMER'];
     }
 
@@ -217,21 +247,8 @@ class Customer extends BaseEntity implements UserInterface
     }
 
     /**
-     * @return Token
+     * @return null|string
      */
-    public function getCredentials(): Token
-    {
-        return $this->credentials;
-    }
-
-    /**
-     * @param Token $credentials
-     */
-    public function setCredentials(?Token $credentials = NULL): void
-    {
-        $this->credentials = $credentials;
-    }
-
     public function getSalt()
     {
         return NULL;
@@ -245,7 +262,11 @@ class Customer extends BaseEntity implements UserInterface
         return $this->getLogin();
     }
 
+    /**
+     *
+     */
     public function eraseCredentials(): void
     {
+        $this->credentials = null;
     }
 }

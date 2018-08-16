@@ -16,3 +16,14 @@ message Employee {
     string position = 6;
     string state = 7;
 }
+
+message Employee {
+    uint32 id = 1;
+    string login = 2;
+    string name = 3;
+    string email = 4;
+    string phone = 5;
+    string registration_date = 6;
+    bool is_blocked = 7;
+    string server_id = 8;
+}
