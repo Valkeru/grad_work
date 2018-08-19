@@ -6,7 +6,7 @@
  * Time: 15:23
  */
 
-namespace App\Controller\PublicApi;
+namespace App\Controller\PublicApi\v1;
 
 use App\Entity\Customer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

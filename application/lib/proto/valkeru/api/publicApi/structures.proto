@@ -8,12 +8,12 @@ message DummyMessage {
 
 }
 
-message Employee {
+message Customer {
     uint32 id = 1;
     string login = 2;
     string name = 3;
     string email = 4;
     string phone = 5;
     bool is_blocked = 7;
-    string server_id = 8;
+    uint32 server_id = 8;
 }

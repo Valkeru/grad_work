@@ -4,6 +4,8 @@ namespace App\Command;
 
 use App\Entity\AccountStatus;
 use App\Entity\Customer;
+use App\Entity\Server;
+use App\Repository\ServerRepository;
 use Predis\Client;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Cache\Simple\RedisCache;
@@ -29,6 +31,8 @@ class TestCommand extends Command
      */
     private $container;
 
+    private $cache;
+
     public function __construct(ContainerInterface $container)
     {
         parent::__construct();
@@ -37,18 +41,12 @@ class TestCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $c = new Customer();
+        $em = $this->container->get('doctrine.orm.entity_manager');
+        /** @var Server $srv */
+        $srv = $em->getRepository(Server::class)->find(1);
 
-        $em = $this->container->get('doctrine.orm.default_entity_manager');
+        $c = $srv->getCustomers()->toArray();
 
-        $c->setPassword('qwerty')
-            ->setLogin('valkeru')
-            ->setEmail('valkeru@valkeru.ru')
-            ->setName('Лис Накраман')
-            ->setPhone('+79312671953')
-        ;
-
-        $em->persist($c);
-        $em->flush();
+        return;
     }
 }

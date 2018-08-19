@@ -8,6 +8,7 @@
 
 namespace App\Entity;
 
+use App\Service\ServerService;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -46,8 +47,9 @@ class AccountStatus
      */
     private $registrationDate;
 
-    private $server;
-
+    /**
+     * AccountStatus constructor.
+     */
     public function __construct()
     {
         $this->registrationDate = new \DateTime();
@@ -86,24 +88,6 @@ class AccountStatus
     public function setIsBlocked(bool $isBlocked): self
     {
         $this->isBlocked = $isBlocked;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getServer()
-    {
-        return $this->server;
-    }
-
-    /**
-     * @param mixed $server
-     * @return AccountStatus
-     */
-    public function setServer($server): self
-    {
-        $this->server = $server;
         return $this;
     }
 

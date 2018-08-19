@@ -3,6 +3,7 @@ syntax = 'proto3';
 package valkeru.api.publicApi.registration;
 option php_namespace = "Valkeru\\PublicApi\\Registration";
 import "google/api/annotations.proto";
+import "valkeru/api/publicApi/structures.proto";
 
 service RegistrationService {
     rpc register (RegistrationRequest) returns (RegistrationResponse) {
@@ -29,7 +30,7 @@ message RegistrationResponse {
     }
 
     message Success {
-        uint32 user_id = 1;
+        structures.Customer customer = 1;
         string token = 2;
     }
 
@@ -42,6 +43,13 @@ message RegistrationResponse {
             INTERNAL_ERROR = 1;
             USER_ALREADY_EXISTS = 2;
             PASSWORD_TOO_WEAK = 3;
+            LOGIN_IS_BLANK = 4;
+            NAME_IS_BLANK = 5;
+            SURNAME_IS_BLANK = 6;
+            EMAIL_IS_BLANK = 7;
+            PHONE_IS_BLANK = 8;
+            PASSWORD_IS_BLANK = 9;
+            INVALID_PASSWORD = 10;
         }
     }
 }

@@ -1,0 +1,5 @@
+monolog:
+  handlers:
+    gelf:
+      type: service
+      id: monolog.gelf_handler

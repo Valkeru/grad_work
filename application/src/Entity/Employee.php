@@ -9,7 +9,9 @@
 namespace App\Entity;
 
 use App\Entity\Base\BaseEntity;
+use App\Helpers\PasswordHelper;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -18,7 +20,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @package App\Entity
  * @method \App\Repository\EmployeeRepository find(\Doctrine\ORM\EntityManager $entityManager)
  *
- * @ORM\Table(name="workers")
+ * @ORM\Table(name="workers", indexes={
+ *     @ORM\Index(name="idx_name", columns={"name"})
+ * }, uniqueConstraints={
+ *              @ORM\UniqueConstraint(name="ux_login", columns={"login"}),
+ *              @ORM\UniqueConstraint(name="ux_email", columns={"email"})
+ *          }
+ *     )
  * @ORM\Entity(repositoryClass="App\Repository\EmployeeRepository")
  */
 class Employee extends BaseEntity implements UserInterface
@@ -27,66 +35,87 @@ class Employee extends BaseEntity implements UserInterface
     public const STATUS_WORKING   = 'working';
     public const STATUS_FIRED     = 'fired';
 
-    public const POSITION_SUPPORT = 'support';
-    public const POSITION_ADMIN   = 'admin';
-    public const POSITION_CODER   = 'coder';
-    public const POSITION_MANAGER = 'manager';
-    public const POSITION_DEVOPS  = 'devops';
+    public const POSITION_SUPPORT   = 'support';
+    public const POSITION_ADMIN     = 'admin';
+    public const POSITION_DEVELOPER = 'developer';
+    public const POSITION_MANAGER   = 'manager';
+    public const POSITION_DEVOPS    = 'devops';
 
     public const DEPARTMENT_SUPPORT = 'support';
     public const DEPARTMENT_ADMIN   = 'admin';
     public const DEPARTMENT_DEV     = 'development';
     public const DEPARTMENT_MANAGER = 'manager';
-    public const DEPARTMENT_BILL    = 'bill';
 
     /**
      * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var string
+     * @ORM\Column(type="string", nullable=false)
+     * @Assert\NotBlank()
      */
     private $login;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=95, nullable=false)
+     *
+     * @Assert\Length(
+     *     min=95,
+     *     max=95,
+     *     exactMessage="Password hash may consist of only {{ limit }} symbols"
+     * )
+     * @Assert\NotBlank()
+     * @Assert\Regex(pattern="/^\$argon2i\$v=19\$m=1024,t=2,p=4\$.{66}$/", message="Invalid password hash")
      */
     private $password;
 
     /**
      * @var string
+     * @ORM\Column(type="string", nullable=false)
+     *
+     * @Assert\NotBlank()
+     * @Assert\Email()
      */
     private $email;
 
     /**
      * @var string
+     * @ORM\Column(type="string", nullable=false)
+     * @Assert\NotBlank()
      */
     private $name;
 
     /**
      * @var string
+     * @ORM\Column(type="string", nullable=false, columnDefinition="ENUM('support', 'admin', 'development', 'manager', 'bill')", options={"default":"support"})
      */
     private $department;
 
     /**
      * @var string
+     * @ORM\Column(type="string", nullable=false, columnDefinition="ENUM('support', 'admin', 'developer', 'manager', 'devops')", options={"default":"support"})
      */
     private $position;
 
     /**
      * @var string
+     * @ORM\Column(type="string", nullable=false, columnDefinition="ENUM('probation', 'working', 'fired')")
      */
     private $status = self::STATUS_PROBATION;
 
     /**
      * @var bool
+     * @ORM\Column(type="boolean", nullable=false, options={"default": false})
      */
-    private $isAdmin;
+    private $isAdmin = false;
 
     /**
      * @return int
@@ -122,7 +151,7 @@ class Employee extends BaseEntity implements UserInterface
      */
     public function setPassword(string $password): self
     {
-        $this->password = password_hash($password, PASSWORD_BCRYPT);
+        $this->password = PasswordHelper::hashPassword($password);
 
         return $this;
     }

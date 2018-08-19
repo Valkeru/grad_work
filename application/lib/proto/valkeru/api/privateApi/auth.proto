@@ -13,9 +13,25 @@ service AuthService {
         };
     }
 
-    rpc logout (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc logout (LogoutRequest) returns (LogoutResponse) {
         option (google.api.http) = {
             post: "/auth/logout"
         };
     }
+}
+
+message LoginRequest {
+
+}
+
+message LoginResponse {
+
+}
+
+message LogoutRequest {
+
+}
+
+message LogoutResponse {
+
 }

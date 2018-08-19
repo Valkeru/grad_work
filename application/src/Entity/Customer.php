@@ -9,6 +9,7 @@
 namespace App\Entity;
 
 use App\Entity\Base\BaseEntity;
+use App\Helpers\PasswordHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Lcobucci\JWT\Token;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -18,11 +19,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * Class Customer
  *
  * @package App\Entity
- * @method \App\Repository\CustomerRepository find(\Doctrine\ORM\EntityManager $entityManager)
+ * @method static \App\Repository\CustomerRepository find(\Doctrine\ORM\EntityManager $entityManager)
  *
  * @ORM\Table(name="customers")
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
- * @ORM\HasLifecycleCallbacks()
  */
 class Customer extends BaseEntity implements UserInterface
 {
@@ -69,7 +69,7 @@ class Customer extends BaseEntity implements UserInterface
      * @ORM\Column(name="phone", type="string", length=20, nullable=false)
      *
      * @Assert\NotBlank()
-     * @Assert\Regex(pattern="/^\+\d+$/", message="Invalid phone")
+     * @Assert\Regex(pattern="/^\+\d+$/", message="Invalid phone format")
      */
     private $phone;
 
@@ -79,11 +79,11 @@ class Customer extends BaseEntity implements UserInterface
      * @ORM\Column(name="password", type="string", length=95, nullable=false)
      *
      * @Assert\Length(
-     *     min=60,
-     *     max=60,
+     *     min=95,
+     *     max=95,
      *     exactMessage="Password hash may consist of only {{ limit }} symbols"
      * )
-     * @Assert\Regex(pattern="/^\$2y\$.{56}$/", message="Invalid password hash")
+     * @Assert\Regex(pattern="/^\$argon2i\$v=19\$m=1024,t=2,p=4\$.{66}$/", message="Invalid password hash")
      */
     private $password;
 
@@ -98,6 +98,13 @@ class Customer extends BaseEntity implements UserInterface
      * @ORM\OneToOne(targetEntity="App\Entity\AccountStatus", mappedBy="customer", cascade={"persist"})
      */
     private $accountStatus;
+
+    /**
+     * @var Server
+     * @ORM\ManyToOne(targetEntity="App\Entity\Server", inversedBy="customers")
+     * @ORM\JoinColumn(name="server_id", referencedColumnName="id")
+     */
+    private $server;
 
     /**
      * Customer constructor.
@@ -213,9 +220,19 @@ class Customer extends BaseEntity implements UserInterface
      */
     public function setPassword(string $password): self
     {
-        $this->password = password_hash($password, PASSWORD_ARGON2I, ['threads' => 4]);
+        $this->password = PasswordHelper::hashPassword($password);
 
         return $this;
+    }
+
+    /**
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function verifyPassword(string $password): bool
+    {
+        return password_verify($password, $this->password);
     }
 
     /**
@@ -224,6 +241,26 @@ class Customer extends BaseEntity implements UserInterface
     public function getAccountStatus(): AccountStatus
     {
         return $this->accountStatus;
+    }
+
+    /**
+     * @return Server
+     */
+    public function getServer(): Server
+    {
+        return $this->server;
+    }
+
+    /**
+     * @param Server $server
+     *
+     * @return Customer
+     */
+    public function setServer(Server $server): self
+    {
+        $this->server = $server;
+
+        return $this;
     }
 
     /**
@@ -246,12 +283,8 @@ class Customer extends BaseEntity implements UserInterface
         return $this->getLogin();
     }
 
-    /**
-     * @return null|string
-     */
-    public function getSalt()
+    public function getSalt(): void
     {
-        return NULL;
     }
 
     /**
@@ -262,9 +295,6 @@ class Customer extends BaseEntity implements UserInterface
         return $this->getLogin();
     }
 
-    /**
-     *
-     */
     public function eraseCredentials(): void
     {
         $this->credentials = null;

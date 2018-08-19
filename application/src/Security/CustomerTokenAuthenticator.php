@@ -11,13 +11,17 @@ namespace App\Security;
 use App\Entity\Customer;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Key;
+use App\Helpers\BearerHelper;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use App\Exception\InvalidTokenException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Cache\Simple\RedisCache;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 
 class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
@@ -26,6 +30,11 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
      * @var string
      */
     private $publicKeyFile;
+
+    /**
+     * @var RedisCache
+     */
+    private $cache;
 
     /**
      * CustomerTokenAuthenticator constructor.
@@ -39,6 +48,7 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
         }
 
         $this->publicKeyFile = 'file://' . $container->getParameter('app.public.public_key');
+        $this->cache         = $container->get('app.cache.customer_token_blacklist');
     }
 
     /**
@@ -48,9 +58,9 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
      * @return PreAuthenticatedToken
      * @throws UnauthorizedHttpException
      */
-    public function createToken(Request $request, $providerKey)
+    public function createToken(Request $request, $providerKey): PreAuthenticatedToken
     {
-        $tokenString = str_replace('Bearer ', '', $request->headers->get('Authorization', ''));
+        $tokenString = BearerHelper::extractTokenString($request);
 
         if (empty($tokenString)) {
             throw new UnauthorizedHttpException('');
@@ -66,6 +76,8 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
      *
      * @return PreAuthenticatedToken
      * @throws UnauthorizedHttpException
+     * @throws InvalidTokenException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey): PreAuthenticatedToken
     {
@@ -73,17 +85,38 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
         $tokenString = $token->getCredentials();
         $signer      = new Sha256();
         $publicKey   = new Key($this->publicKeyFile);
-        $jwt         = (new Parser())->parse($tokenString);
+        try {
+            $jwt = (new Parser())->parse($tokenString);
+        } catch (\InvalidArgumentException $e) {
+            throw new InvalidTokenException($e->getMessage());
+        }
 
         if (!$jwt->verify($signer, $publicKey) || $jwt->isExpired()) {
             throw new UnauthorizedHttpException('');
         }
 
-        /** @var Customer $user */
-        $user = $userProvider->loadUserByUsername($jwt->getClaim('userName'));
-        $user->setCredentials($jwt);
+        try {
+            /** @var Customer $user */
+            $user              = $userProvider->loadUserByUsername($jwt->getClaim('userName'));
+            $now               = new \DateTime();
+            $tokenUuid         = $jwt->getClaim('uuid');
+            $blacklistedTokens = $this->cache->get((string)$user->getId(), []);
 
-        return new PreAuthenticatedToken($user, $tokenString, $providerKey);
+            foreach ($blacklistedTokens as $uuid => $expiration) {
+                if ($expiration <= $now) {
+                    unset($blacklistedTokens[$uuid]);
+                    continue;
+                }
+
+                if ($uuid === $tokenUuid) {
+                    throw new UnauthorizedHttpException('');
+                }
+            }
+        } catch (UsernameNotFoundException $e) {
+            throw new UnauthorizedHttpException('');
+        }
+
+        return new PreAuthenticatedToken($user, $tokenString, $providerKey, $user->getRoles());
     }
 
     /**

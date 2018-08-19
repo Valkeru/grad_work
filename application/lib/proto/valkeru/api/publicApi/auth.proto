@@ -1,0 +1,74 @@
+syntax = 'proto3';
+
+package valkeru.api.publicApi.security;
+option php_namespace = "Valkeru\\PublicApi\\Auth";
+import "google/api/annotations.proto";
+import "valkeru/api/publicApi/structures.proto";
+
+service AuthService {
+    rpc login (structures.DummyMessage) returns (structures.DummyMessage) {
+        option (google.api.http) = {
+            post: "/v1/auth/login"
+            body: "*"
+        };
+    }
+
+    rpc logout (LogoutRequest) returns (LogoutResponse) {
+        option (google.api.http) = {
+            get: "/v1/auth/logout"
+        };
+    }
+}
+
+message LoginRequest {
+    string login = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    oneof response {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        string token = 1;
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+            INTERNAL_ERROR = 1;
+            INVALID_CREDENTIALS = 2;
+            EMPTY_CREDENTIALS = 3;
+        }
+    }
+}
+
+message LogoutRequest {
+
+}
+
+message LogoutResponse {
+    oneof response {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success{
+
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+            INTERNAL_ERROR = 1;
+        }
+    }
+}

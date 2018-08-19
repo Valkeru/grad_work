@@ -9,14 +9,14 @@ RUN apt-get update \
 
 RUN rm /etc/localtime && ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 
-ADD cont-init.d /etc/cont-init.d
-
 RUN wget -qP /tmp/ https://github.com/just-containers/s6-overlay/releases/download/v1.21.4.0/s6-overlay-amd64.tar.gz \
     && tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && rm /tmp/s6-overlay-amd64.tar.gz
 
 RUN wget -qP /tmp/ https://valkeru.ru/upload/valkeru-protobuf-pack_20180612-git.master-1_amd64.deb \
     && dpkg -i /tmp/valkeru-protobuf-pack_20180612-git.master-1_amd64.deb \
     && rm /tmp/valkeru-protobuf-pack_20180612-git.master-1_amd64.deb
+
+ADD cont-init.d /etc/cont-init.d
 
 #s6-overlay init
 ENTRYPOINT ["/init"]

@@ -9,6 +9,10 @@ parameters:
     app.private.public_key: '%kernel.project_dir%/keys/privateApi/public.key'
     app.private.private_key: '%kernel.project_dir%/keys/privateApi/private.key'
     app.public_enabled: '%env(PUBLIC_ENABLED)%'
+    app.graylog_host: '%env(GRAYLOG_HOST)%'
+    app.graylog_port: '%env(GRAYLOG_GELF_PORT)%'
+    app.redis.default_ttl: 604800
+    monolog.handler.gelf.debug_level: '%graylog_debug_level%'
 
 services:
     # default configuration for services in *this* file
@@ -41,9 +45,57 @@ services:
         arguments:
             - '@App\Repository\EmployeeRepository'
 
+    App\EventSubscriber\:
+        resource: '../src/EventSubscriber/*'
 
-#    App\EventSubscriber\:
-#      resource: '../src/EventSubscriber/*'
+    App\EventSubscriber\DoctrineEventSubscriber:
+        tags:
+        - {name: doctrine.event_subscriber, connection: default}
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    app.cache.customer_token_blacklist:
+        class: Symfony\Component\Cache\Simple\RedisCache
+        public: true
+        factory:
+          - '@App\Factory\RedisCacheFactory'
+          - 'makeRedisCache'
+        arguments:
+          - '@snc_redis.customer_token_blacklist'
+          - '%app.redis.default_ttl%'
+
+    app.cache.employee_token_blacklist:
+      class: Symfony\Component\Cache\Simple\RedisCache
+      public: true
+      factory:
+        - '@App\Factory\RedisCacheFactory'
+        - 'makeRedisCache'
+      arguments:
+        - '@snc_redis.employee_token_blacklist'
+        - '%app.redis.default_ttl%'
+
+    gelf.validator:
+        class: Gelf\MessageValidator
+
+    gelf.transport:
+        class: Gelf\Transport\UdpTransport
+        arguments:
+        - '%app.graylog_host%'
+        - '%app.graylog_port%'
+
+    gelf.publisher:
+        class: Gelf\Publisher
+        arguments:
+        - '@gelf.transport'
+        - '@gelf.validator'
+
+    monolog.gelf_formatter:
+        class: Monolog\Formatter\GelfMessageFormatter
+        arguments:
+        - 'webapp-%app.system_hostname%'
+
+    monolog.gelf_handler:
+        class: Monolog\Handler\GelfHandler
+        arguments:
+        - '@gelf.publisher'
+        - '%monolog.handler.gelf.debug_level%'
+        calls:
+        - ['setFormatter', ['@monolog.gelf_formatter']]

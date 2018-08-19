@@ -15,6 +15,6 @@ abstract class BaseEntity
 {
     public static function find(EntityManager $em): EntityRepository
     {
-        return $em->getRepository(self::class);
+        return $em->getRepository(static::class);
     }
 }

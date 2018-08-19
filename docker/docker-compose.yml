@@ -8,8 +8,9 @@ services:
       - ./xdebug.ini:/etc/php/7.2/mods-available/xdebug.ini
     env_file:
       - ../application/.env
+      - ../application/.mysql.env
     environment:
-#       PhpStorm
+      # PhpStorm
       PHP_IDE_CONFIG: "serverName=grad_api"
 
   nginx:
@@ -27,15 +28,54 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     env_file:
-      - ../application/.env
+      - ../application/.mysql.env
 
   redis:
     image: redis:4.0.11
     ports:
       - 63790:6379
     volumes:
-      - redis_persistent:/data
+      - redis_data:/data
+
+  graylog:
+    image: graylog/graylog:2.4
+    ports:
+      # Web-interface
+      - 9001:9000
+    volumes:
+      - graylog_data:/usr/share/graylog/data
+      - ./udp-input-graylog.json:/usr/share/graylog/data/contentpacks/udp-input-graylog.json:ro
+    environment:
+      # Password: graylog
+      GRAYLOG_ROOT_PASSWORD_SHA2: 4bbdd5a829dba09d7a7ff4c1367be7d36a017b4267d728d31bd264f63debeaa6
+      GRAYLOG_CONTENT_PACKS_AUTO_LOAD: udp-input-graylog.json
+      GRAYLOG_CONTENT_PACKS_LOADER_ENABLED: "true"
+      GRAYLOG_CONTENT_PACKS_DIR: data/contentpacks
+
+  mongo:
+    image: mongo:3
+    volumes:
+      - mongo_data:/data/db
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.9
+    environment:
+    - http.host=0.0.0.0
+    - transport.host=localhost
+    - network.host=0.0.0.0
+    # Disable X-Pack security: https://www.elastic.co/guide/en/elasticsearch/reference/5.5/security-settings.html#general-security-settings
+    - xpack.security.enabled=false
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
 
 volumes:
   mysql_data: {}
-  redis_persistent: {}
+  redis_data: {}
+  graylog_data: {}
+  mongo_data: {}
+  elasticsearch_data: {}

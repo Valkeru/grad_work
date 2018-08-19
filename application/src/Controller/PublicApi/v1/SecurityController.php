@@ -6,9 +6,10 @@
  * Time: 17:10
  */
 
-namespace App\Controller\PublicApi;
+namespace App\Controller\PublicApi\v1;
 
 use Lcobucci\JWT\Signer\Key;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,7 +20,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 /**
  * Class SecurityController
  *
- * @package App\Controller\PublicApi
+ * @package App\Controller\PublicApi\v1
  *
  */
 class SecurityController extends Controller

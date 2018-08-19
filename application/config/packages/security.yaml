@@ -17,7 +17,7 @@ security:
             security: false
         open_routes_public:
             host: '%app.public_host%'
-            pattern: ^/(login|logout|register|security)
+            pattern: ^/v\d/(auth/login|register|security)
             security: false
         open_routes_internal:
             host: '%app.private_host%'
@@ -25,6 +25,7 @@ security:
             security: false
         public:
             host: '%app.public_host%'
+            pattern: ^/v\d/
             anonymous: false
             stateless: true
             simple_preauth:
@@ -33,6 +34,7 @@ security:
         private:
             host: '%app.private_host%'
             anonymous: false
+            stateless: true
             simple_preauth:
                 authenticator: App\Security\EmployeeTokenAuthenticator
             provider: employee_provider

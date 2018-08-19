@@ -15,6 +15,10 @@ if (!isset($_SERVER['APP_ENV'])) {
     (new Dotenv())->load(__DIR__.'/../.env');
 }
 
+if (!isset($_SERVER['DB_DRIVER'])) {
+    (new Dotenv())->load(__DIR__ . '/../.mysql.env');
+}
+
 $env = $_SERVER['APP_ENV'] ?? 'dev';
 $debug = (bool) ($_SERVER['APP_DEBUG'] ?? ('prod' !== $env));
 

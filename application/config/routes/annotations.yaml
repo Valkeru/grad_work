@@ -1,9 +1,10 @@
 public:
   host: '%app.public_host%'
-  resource: ../../src/Controller/PublicApi/
+  prefix: /v1
+  resource: ../../src/Controller/PublicApi/v1/
   type: annotation
 
-internal:
+private:
   host: '%app.private_host%'
   resource: ../../src/Controller/PrivateApi/
   type: annotation

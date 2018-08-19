@@ -8,14 +8,19 @@
 
 namespace App\Security;
 
+use App\Entity\Employee;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Key;
+use App\Helpers\BearerHelper;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use App\Exception\InvalidTokenException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Cache\Simple\RedisCache;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 
@@ -26,12 +31,15 @@ class EmployeeTokenAuthenticator implements SimplePreAuthenticatorInterface
      */
     private $publicKeyFile;
 
-    private $host;
+    /**
+     * @var RedisCache
+     */
+    private $cache;
 
     public function __construct(ContainerInterface $container)
     {
         $this->publicKeyFile = 'file://' . $container->getParameter('app.private.public_key');
-        $this->host          = $container->getParameter('app.private_host');
+        $this->cache         = $container->get('app.cache.employee_token_blacklist');
     }
 
     /**
@@ -43,7 +51,7 @@ class EmployeeTokenAuthenticator implements SimplePreAuthenticatorInterface
      */
     public function createToken(Request $request, $providerKey): PreAuthenticatedToken
     {
-        $tokenString = str_replace('Bearer ', '', $request->headers->get('Authorization', ''));
+        $tokenString = BearerHelper::extractTokenString($request);
 
         if (empty($tokenString)) {
             throw new UnauthorizedHttpException('');
@@ -59,6 +67,8 @@ class EmployeeTokenAuthenticator implements SimplePreAuthenticatorInterface
      *
      * @return PreAuthenticatedToken
      * @throws UnauthorizedHttpException
+     * @throws InvalidTokenException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey): PreAuthenticatedToken
     {
@@ -66,15 +76,38 @@ class EmployeeTokenAuthenticator implements SimplePreAuthenticatorInterface
         $tokenString = $token->getCredentials();
         $signer      = new Sha256();
         $publicKey   = new Key($this->publicKeyFile);
-        $jwt         = (new Parser())->parse($tokenString);
+        try {
+            $jwt = (new Parser())->parse($tokenString);
+        } catch (\InvalidArgumentException $e) {
+            throw new InvalidTokenException($e->getMessage());
+        }
 
         if (!$jwt->verify($signer, $publicKey) || $jwt->isExpired()) {
             throw new UnauthorizedHttpException('');
         }
 
-        $employee = $userProvider->loadUserByUsername($jwt->getClaim('employeeLogin'));
+        try {
+            /** @var Employee $employee */
+            $employee          = $userProvider->loadUserByUsername($jwt->getClaim('employeeLogin'));
+            $now               = new \DateTime();
+            $tokenUuid         = $jwt->getClaim('uuid');
+            $blacklistedTokens = $this->cache->get((string)$employee->getId(), []);
 
-        return new PreAuthenticatedToken($employee, $tokenString, $providerKey);
+            foreach ($blacklistedTokens as $uuid => $expiration) {
+                if ($expiration <= $now) {
+                    unset($blacklistedTokens[$uuid]);
+                    continue;
+                }
+
+                if ($uuid === $tokenUuid) {
+                    throw new UnauthorizedHttpException('');
+                }
+            }
+        } catch (UsernameNotFoundException $e) {
+            throw new UnauthorizedHttpException('');
+        }
+
+        return new PreAuthenticatedToken($employee, $tokenString, $providerKey, $employee->getRoles());
     }
 
     public function supportsToken(TokenInterface $token, $providerKey): bool
