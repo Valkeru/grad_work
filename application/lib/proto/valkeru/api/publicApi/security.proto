@@ -1,0 +1,87 @@
+syntax = 'proto3';
+
+package valkeru.api.publicApi.security;
+option php_namespace = "Valkeru\\PublicApi\\Security";
+import "google/api/annotations.proto";
+
+//Все методы, связанные с безопасностью, должны быть доступны пользователям с любой ролью
+service SecurityService {
+    rpc getTokenInfo (TokenInfoRequest) returns (TokenInfoResponse) {
+        option (google.api.http) = {
+            get: "/v1/security/token-info"
+        };
+    }
+
+    rpc blacklistToken (BlacklistTokenRequest) returns (BlacklistTokenResponse) {
+        option (google.api.http) = {
+            get: "/v1/security/blacklist-token"
+        };
+    }
+
+    rpc invalidateAllTokens (InvalidateTokensRequest) returns (InvalidateTokensResponse) {
+        option (google.api.http) = {
+            delete: "/v1/security/blacklist-token/all"
+            body: "*"
+        };
+    }
+
+    rpc changePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
+        option (google.api.http) = {
+            patch: "/v1/security/password"
+            body: "*"
+        };
+    }
+}
+
+message TokenInfoRequest {
+
+}
+
+message TokenInfoResponse {
+
+}
+
+message BlacklistTokenRequest {
+    string uuid = 1;
+}
+
+message BlacklistTokenResponse {
+
+}
+
+message ChangePasswordRequest {
+    string old_password = 1;
+    string new_password = 2;
+    string new_password_repeated = 3;
+}
+
+message ChangePasswordResponse {
+    oneof response {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        string token = 1;
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+            INVALID_PASSWORD = 1;
+            NEW_PASSWORDS_IS_NOT_SAME = 2;
+            INVALID_NEW_PASSWORD = 3;
+        }
+    }
+}
+
+message InvalidateTokensRequest {
+    string password = 1;
+}
+
+message InvalidateTokensResponse {
+
+}

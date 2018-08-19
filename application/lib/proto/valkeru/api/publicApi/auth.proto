@@ -1,6 +1,6 @@
 syntax = 'proto3';
 
-package valkeru.api.publicApi.security;
+package valkeru.api.publicApi.auth;
 option php_namespace = "Valkeru\\PublicApi\\Auth";
 import "google/api/annotations.proto";
 import "valkeru/api/publicApi/structures.proto";
