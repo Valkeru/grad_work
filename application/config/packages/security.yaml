@@ -14,8 +14,9 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-#    -   host: '%app.public_host%'
-#        allow_if: "request.server.get('PUBLIC_ENABLED') == 1"
+    -   host: '%app.public_host%'
+        path: ^/v\d/
+        allow_if: "request.server.get('PUBLIC_ENABLED') == 1"
     # - { path: ^/admin, roles: ROLE_ADMIN }
     # - { path: ^/profile, roles: ROLE_USER }
 
