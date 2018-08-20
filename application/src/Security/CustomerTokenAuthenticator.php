@@ -116,7 +116,9 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
             throw new UnauthorizedHttpException('');
         }
 
-        return new PreAuthenticatedToken($user, $tokenString, $providerKey, $user->getRoles());
+        $user->setToken($jwt);
+
+        return new PreAuthenticatedToken($user, $jwt, $providerKey, $user->getRoles());
     }
 
     /**

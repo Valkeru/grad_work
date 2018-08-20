@@ -25,3 +25,8 @@
 
 - Регистрация
 - Аутентификация (реализация через Security Bundle + JWT)
+
+# Tips
+
+- Сменить подсетку докера  
+https://support.zenoss.com/hc/en-us/articles/203582809-How-to-Change-the-Default-Docker-Subnet

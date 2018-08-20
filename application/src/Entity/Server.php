@@ -26,7 +26,7 @@ class Server
     public const TYPE_HOSTING                    = 'hosting';
     public const TYPE_SYSTEM                     = 'system';
     public const TYPE_DEDICATED                  = 'dedicated';
-    public const TYPE_DEDICATED_WITH_MAINTENANCE = 'dedicated_with_maintanance';
+    public const TYPE_DEDICATED_WITH_MAINTENANCE = 'dedicated_with_maintenance';
     /**
      * @var int
      * @ORM\Column(type="integer", nullable=false, options={"unsigned": true})

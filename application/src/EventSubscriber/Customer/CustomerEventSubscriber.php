@@ -6,7 +6,7 @@
  * Time: 17:32
  */
 
-namespace App\EventSubscriber\customer;
+namespace App\EventSubscriber\Customer;
 
 use App\Event\customer\CustomerTokenInvalidateEvent;
 use App\Service\SecurityService;
@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Class CustomerEventSubscriber
  *
- * @package App\EventSubscriber\customer
+ * @package App\EventSubscriber\Customer
  */
 class CustomerEventSubscriber implements EventSubscriberInterface
 {

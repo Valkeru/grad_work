@@ -15,12 +15,14 @@ use App\Exception\InvalidTokenException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
 use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\{
-    NotFoundHttpException, AccessDeniedHttpException, UnauthorizedHttpException, MethodNotAllowedHttpException,
+    HttpException, NotFoundHttpException, AccessDeniedHttpException,
+    UnauthorizedHttpException, MethodNotAllowedHttpException
 };
 
 class ExceptionSubscriber implements EventSubscriberInterface
@@ -44,68 +46,63 @@ class ExceptionSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::EXCEPTION => 'process'
+            KernelEvents::EXCEPTION => 'onException'
         ];
     }
 
-    public function process(GetResponseForExceptionEvent $event): void
+    public function onException(GetResponseForExceptionEvent $event): void
     {
         $event->allowCustomResponseCode();
         $exception = $event->getException();
 
-        try {
-            throw $exception;
-        } catch (UnauthorizedHttpException $unauthorizedHttpException) {
-
-            $event->setResponse(
-                new Response($unauthorizedHttpException->getMessage(), Response::HTTP_UNAUTHORIZED)
-            );
-
-        } catch (AccessDeniedHttpException $accessDeniedHttpException) {
-
-            $event->setResponse(new Response(NULL, Response::HTTP_FORBIDDEN));
-
-        } catch (NotFoundHttpException $notFoundHttpException) {
-
-            $event->setResponse(new Response(NULL, Response::HTTP_NOT_FOUND));
-
-        } catch (MethodNotAllowedHttpException $methodNotAllowedHttpException) {
-
-            $event->setResponse(new Response(NULL, Response::HTTP_METHOD_NOT_ALLOWED));
-
-        } catch (ProtobufException $protobufException) {
-
-            $event->setResponse(
-                new JsonResponse(['error' => $protobufException->getMessage()], Response::HTTP_BAD_REQUEST)
-            );
-
-        } catch (ValidatorException $validatorException) {
-
-            $event->setResponse(
-                JsonResponse::fromJsonString($validatorException->getMessage(), Response::HTTP_BAD_REQUEST)
-            );
-
-        } catch (InvalidTokenException $invalidTokenException) {
-
-            $event->setResponse(new JsonResponse(
-                [
-                    'error' => $invalidTokenException->getMessage()
-                ], Response::HTTP_BAD_REQUEST
-            ));
-
-        } catch (\Throwable $throwable) {
-
-            if (!$this->isInDebugMode) {
-                $event->setResponse(new Response());
-            } else {
+        switch (\get_class($exception)) {
+            case UnauthorizedHttpException::class:
                 $event->setResponse(
-                    new JsonResponse([
-                        'error' => $throwable->getMessage()
-                    ])
+                    new Response($exception->getMessage(), Response::HTTP_UNAUTHORIZED)
                 );
-            }
+                break;
+            case NotFoundHttpException::class:
+            case AccessDeniedHttpException::class:
+            case MethodNotAllowedHttpException::class:
+                /** @var HttpException $exception */
+                $event->setResponse(new Response(NULL, $exception->getStatusCode()));
+                break;
+            case ProtobufException::class:
+                $event->setResponse(
+                    new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST)
+                );
+                break;
+            case ValidatorException::class:
+                $event->setResponse(
+                    JsonResponse::fromJsonString($exception->getMessage(), Response::HTTP_BAD_REQUEST)
+                );
+                break;
+            case InvalidTokenException::class:
+                $event->setResponse(new JsonResponse(
+                                        [
+                                            'error' => $exception->getMessage()
+                                        ], Response::HTTP_BAD_REQUEST
+                                    ));
+                break;
+            case InsufficientAuthenticationException::class:
+                $previous = $exception->getPrevious();
+                $event->setResponse(new JsonResponse([
+                    'message' => $previous->getMessage()
+                ], Response::HTTP_FORBIDDEN));
+                break;
+            default:
+                if (!$this->isInDebugMode) {
+                    $event->setResponse(new Response());
+                } else {
+                    $event->setResponse(
+                        new JsonResponse([
+                                             'error' => $exception->getMessage()
+                                         ])
+                    );
+                }
 
-            $event->getResponse()->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+                $event->getResponse()->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+                break;
         }
 
         if (method_exists($exception, 'getHeaders')) {

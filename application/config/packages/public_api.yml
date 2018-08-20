@@ -27,3 +27,11 @@ services:
     arguments:
     - '@request_stack'
     - '\Valkeru\PublicApi\Auth\LogoutRequest'
+
+  Valkeru\PublicApi\Security\TokenInfoRequest:
+    factory:
+    - '@App\Factory\PublicApiFactory'
+    - 'makePublicApiRequest'
+    arguments:
+    - '@request_stack'
+    - '\Valkeru\PublicApi\Security\TokenInfoRequest'

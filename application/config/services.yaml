@@ -20,8 +20,8 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         public: false       # Allows optimizing the container by removing unused services; this also means
-                            # fetching services directly from the container via $container->get() won't work.
-                            # The best practice is to be explicit about your dependencies anyway.
+        # fetching services directly from the container via $container->get() won't work.
+        # The best practice is to be explicit about your dependencies anyway.
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -38,12 +38,12 @@ services:
     app.public.customer_provider:
         class: App\Security\CustomerProvider
         arguments:
-            - '@App\Repository\CustomerRepository'
+        - '@App\Repository\CustomerRepository'
 
     app.private.employee_provider:
         class: App\Security\EmployeeProvider
         arguments:
-            - '@App\Repository\EmployeeRepository'
+        - '@App\Repository\EmployeeRepository'
 
     App\EventSubscriber\:
         resource: '../src/EventSubscriber/*'
@@ -52,23 +52,33 @@ services:
         tags:
         - {name: doctrine.event_subscriber, connection: default}
 
+    app.migration.event_subscriber:
+        class: App\EventSubscriber\Migration\MigrationEventSubscriber
+        tags:
+        - {name: doctrine.event_subscriber}
+
+    app.entity.customer_listener:
+        class: App\EventListener\EntityListener\CustomerListener
+        tags:
+        - {name: doctrine.orm.entity_listener, entity: App\Entity\Customer}
+
     app.cache.customer_token_blacklist:
         class: Symfony\Component\Cache\Simple\RedisCache
         public: true
         factory:
-          - '@App\Factory\RedisCacheFactory'
-          - 'makeRedisCache'
-        arguments:
-          - '@snc_redis.customer_token_blacklist'
-          - '%app.redis.default_ttl%'
-
-    app.cache.employee_token_blacklist:
-      class: Symfony\Component\Cache\Simple\RedisCache
-      public: true
-      factory:
         - '@App\Factory\RedisCacheFactory'
         - 'makeRedisCache'
-      arguments:
+        arguments:
+        - '@snc_redis.customer_token_blacklist'
+        - '%app.redis.default_ttl%'
+
+    app.cache.employee_token_blacklist:
+        class: Symfony\Component\Cache\Simple\RedisCache
+        public: true
+        factory:
+        - '@App\Factory\RedisCacheFactory'
+        - 'makeRedisCache'
+        arguments:
         - '@snc_redis.employee_token_blacklist'
         - '%app.redis.default_ttl%'
 

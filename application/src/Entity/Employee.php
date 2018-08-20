@@ -12,7 +12,6 @@ use App\Entity\Base\BaseEntity;
 use App\Helpers\PasswordHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class Worker
@@ -29,7 +28,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *     )
  * @ORM\Entity(repositoryClass="App\Repository\EmployeeRepository")
  */
-class Employee extends BaseEntity implements UserInterface
+class Employee extends BaseEntity
 {
     public const STATUS_PROBATION = 'probation';
     public const STATUS_WORKING   = 'working';
@@ -293,30 +292,8 @@ class Employee extends BaseEntity implements UserInterface
     /**
      * @return string
      */
-    public function getUsername(): string
+    public function __toString(): string
     {
-        return $this->getLogin();
-    }
-
-    /**
-     * Пароли сотрудников не должны быть доступны в коде
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return '';
-    }
-
-    /**
-     * @return null
-     */
-    public function getSalt()
-    {
-        return NULL;
-    }
-
-    public function eraseCredentials(): void
-    {
+        return $this->login;
     }
 }

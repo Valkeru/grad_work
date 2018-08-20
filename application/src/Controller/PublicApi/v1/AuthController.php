@@ -9,6 +9,7 @@
 namespace App\Controller\PublicApi\v1;
 
 use App\Entity\Customer;
+use App\Entity\IssuedToken;
 use App\Event\customer\CustomerTokenInvalidateEvent;
 use App\Helpers\BearerHelper;
 use App\Service\SecurityService;

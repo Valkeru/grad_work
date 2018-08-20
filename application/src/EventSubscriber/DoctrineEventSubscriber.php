@@ -8,10 +8,9 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Customer;
-use Doctrine\ORM\Events;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Exception\ValidatorException;
@@ -25,12 +24,9 @@ class DoctrineEventSubscriber implements EventSubscriber
      */
     private $validator;
 
-    private $logger;
-
-    public function __construct(ValidatorInterface $validator, LoggerInterface $logger)
+    public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
-        $this->logger    = $logger;
     }
 
     /**
@@ -48,34 +44,22 @@ class DoctrineEventSubscriber implements EventSubscriber
      */
     public function prePersist(LifecycleEventArgs $eventArgs): void
     {
-        $entity = $eventArgs->getEntity();
+        $entity   = $eventArgs->getEntity();
+        $manager  = $eventArgs->getEntityManager();
+        $metadata = $manager->getClassMetadata(\get_class($entity));
+
+        if (\count($metadata->entityListeners) !== 0) {
+            return;
+        }
+
         /** @var ConstraintViolationList $violations */
         $violations = $this->validator->validate($entity);
 
         if (\count($violations) !== 0) {
             $message = new \stdClass();
-            switch (\get_class($entity)) {
-                case Customer::class:
-                    foreach ($violations as $violation) {
-                        $property = $violation->getPropertyPath();
-                        if ($property === 'password') {
-                            $this->logger->error(json_encode([
-                                'customer_login' => $entity->getLogin(),
-                                'violation'      => $violation->getMessage()
-                            ]));
-                            continue;
-                        }
-
-                        $message->$property = $violation->getMessage();
-                    }
-
-                    break;
-                default:
-                    foreach ($violations as $violation) {
-                        $property           = $violation->getPropertyPath();
-                        $message->$property = $violation->getMessage();
-                    }
-                    break;
+            foreach ($violations as $violation) {
+                $property           = $violation->getPropertyPath();
+                $message->$property = $violation->getMessage();
             }
 
             throw new ValidatorException(json_encode($message));

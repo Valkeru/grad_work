@@ -13,7 +13,9 @@ use App\Event\customer\CustomerRegistrationFinishedEvent;
 use Lcobucci\JWT\Token;
 use App\Entity\Customer;
 use App\Service\RegistrationService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -60,7 +62,7 @@ class RegisterController extends Controller
      * @return JsonResponse
      * @throws \Exception
      */
-    public function actionIndex(RegistrationRequest $request): JsonResponse
+    public function actionIndex(RegistrationRequest $request, Request $ht): JsonResponse
     {
         $response          = new RegistrationResponse();
         $registrationError = $this->validateRequest($request, $response);

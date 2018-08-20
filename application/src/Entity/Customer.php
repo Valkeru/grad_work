@@ -13,7 +13,6 @@ use App\Helpers\PasswordHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Lcobucci\JWT\Token;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class Customer
@@ -21,10 +20,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @package App\Entity
  * @method static \App\Repository\CustomerRepository find(\Doctrine\ORM\EntityManager $entityManager)
  *
- * @ORM\Table(name="customers")
+ * @ORM\Table(name="customers", uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="ux_customer_login", columns={"login"})
+ *     })
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
  */
-class Customer extends BaseEntity implements UserInterface
+class Customer extends BaseEntity
 {
     /**
      * @var int
@@ -89,9 +90,10 @@ class Customer extends BaseEntity implements UserInterface
 
     /**
      * JWT токен пользователя
-     * @var Token
+     *
+     * @var Token|null
      */
-    private $credentials;
+    private $token;
 
     /**
      * @var AccountStatus
@@ -101,7 +103,7 @@ class Customer extends BaseEntity implements UserInterface
 
     /**
      * @var Server
-     * @ORM\ManyToOne(targetEntity="App\Entity\Server", inversedBy="customers")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Server", inversedBy="customers", cascade={"persist"})
      * @ORM\JoinColumn(name="server_id", referencedColumnName="id")
      */
     private $server;
@@ -283,20 +285,21 @@ class Customer extends BaseEntity implements UserInterface
         return $this->getLogin();
     }
 
-    public function getSalt(): void
+    /**
+     * @return Token|null
+     */
+    public function getToken(): ?Token
     {
+        return $this->token;
     }
 
     /**
-     * @return string
+     * @param Token $token
      */
-    public function getUsername(): string
+    public function setToken(Token $token): void
     {
-        return $this->getLogin();
-    }
-
-    public function eraseCredentials(): void
-    {
-        $this->credentials = null;
+        if ($this->token === NULL) {
+            $this->token = $token;
+        }
     }
 }

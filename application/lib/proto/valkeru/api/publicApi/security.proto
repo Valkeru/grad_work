@@ -5,6 +5,7 @@ option php_namespace = "Valkeru\\PublicApi\\Security";
 import "google/api/annotations.proto";
 
 //Все методы, связанные с безопасностью, должны быть доступны пользователям с любой ролью
+// Если в запросе присутсвует поле password — по умолчанию считается обязательным
 service SecurityService {
     rpc getTokenInfo (TokenInfoRequest) returns (TokenInfoResponse) {
         option (google.api.http) = {
@@ -18,16 +19,16 @@ service SecurityService {
         };
     }
 
-    rpc invalidateAllTokens (InvalidateTokensRequest) returns (InvalidateTokensResponse) {
+    rpc invalidateAllTokens (InvalidateAllTokensRequest) returns (InvalidateAllTokensResponse) {
         option (google.api.http) = {
-            delete: "/v1/security/blacklist-token/all"
+            post: "/v1/security/blacklist-token/all"
             body: "*"
         };
     }
 
     rpc changePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
         option (google.api.http) = {
-            patch: "/v1/security/password"
+            post: "/v1/security/password"
             body: "*"
         };
     }
@@ -38,15 +39,39 @@ message TokenInfoRequest {
 }
 
 message TokenInfoResponse {
-
+    // Date issued at. Format: Y:m:d H:i:s
+    string iat = 1;
+    // Expiration date. Format: Y:m:d H:i:s
+    string exp = 2;
+    string uuid = 3;
 }
 
 message BlacklistTokenRequest {
+    // UUID токена. Необязательный параметр.
+    // Токен должен принаджежать текущему пользователю.
+    // Если не передан - блэклистится токен, с которым выполнена аутентификация
     string uuid = 1;
+    string password = 2;
 }
 
 message BlacklistTokenResponse {
+    oneof response {
+        Success success = 1;
+        Error error = 2;
+    }
 
+    message Success {
+
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+        }
+    }
 }
 
 message ChangePasswordRequest {
@@ -78,10 +103,26 @@ message ChangePasswordResponse {
     }
 }
 
-message InvalidateTokensRequest {
+message InvalidateAllTokensRequest {
     string password = 1;
 }
 
-message InvalidateTokensResponse {
+message InvalidateAllTokensResponse {
+    oneof response {
+        Success success = 1;
+        Error error = 2;
+    }
 
+    message Success {
+
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+        }
+    }
 }
