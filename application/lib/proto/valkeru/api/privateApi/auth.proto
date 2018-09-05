@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "valkeru/api/privateApi/structures.proto";
 
 service AuthService {
-    rpc login (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc login (LoginRequest) returns (LoginResponse) {
         option (google.api.http) = {
             post: "/auth/login"
             body: "*"
@@ -21,17 +21,16 @@ service AuthService {
 }
 
 message LoginRequest {
-
+    string login = 1;
+    string password = 2;
 }
 
 message LoginResponse {
-
+    string token = 1;
 }
 
 message LogoutRequest {
-
 }
 
 message LogoutResponse {
-
 }

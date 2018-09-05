@@ -8,24 +8,119 @@ import "valkeru/api/privateApi/structures.proto";
 
 //Все методы требуют наличия токена в Authorization
 service CustomerService {
-    rpc newCustomer (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc newCustomer (NewCustomerRequest) returns (NewCustomerResponse) {
         option (google.api.http) = {
             put: "/customer"
-            body: "/"
+            body: "*"
         };
     }
 
     //Один метод для блокировки и разблокировки
-    rpc switchAccountState (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc switchAccountState (SwitchStateRequest) returns (SwitchStateResponse) {
         option (google.api.http) = {
             post: "/customer/{id}"
         };
     }
 
-    rpc editCustomer (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc editCustomer (EditCustomerRequest) returns (EditCustomerResponse) {
         option (google.api.http) = {
             patch: "/customer/{id}"
             body: "*"
         };
+    }
+}
+
+message NewCustomerRequest {
+    string login = 1;
+    string name = 2;
+    string email = 3;
+    string phone = 4;
+    bool is_blocked = 5;
+    string server_id = 6;
+
+}
+
+message NewCustomerResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        structures.Customer customer = 1;
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+            INTERNAL_ERROR = 1;
+            LOGIN_NOT_SET = 2;
+            INVALID_LOGIN = 3;
+            NAME_NOT_SET = 4;
+            INVALID_NAME = 5;
+            EMAIL_NOT_SET = 6;
+            INVALID_EMAIL = 7;
+            PHONE_NOT_SET = 8;
+            INVALID_PHONE = 9;
+            INVALID_SERVER = 10;
+        }
+    }
+}
+
+message SwitchStateRequest {
+    uint32 id = 1;
+}
+
+message SwitchStateResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        structures.Customer customer = 1;
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+            INTERNAL_ERROR = 1;
+        }
+    }
+}
+
+message EditCustomerRequest {
+    string name = 1;
+    string email = 2;
+    string phone = 3;
+}
+
+message EditCustomerResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        structures.Customer customer = 1;
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+            INTERNAL_ERROR = 1;
+            INVALID_NAME = 2;
+            INVALID_EMAIL = 3;
+            INVALID_PHONE = 4;
+        }
     }
 }

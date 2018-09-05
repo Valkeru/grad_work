@@ -3,10 +3,6 @@ syntax = 'proto3';
 package valkeru.api.privateApi.structures;
 option php_namespace = "Valkeru\\PrivateApi\\Structures";
 
-message DummyMessage {
-
-}
-
 message Employee {
     uint32 id = 1;
     string login = 2;

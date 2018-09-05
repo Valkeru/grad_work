@@ -5,10 +5,9 @@ option php_namespace = "Valkeru\\PrivateApi\\Security";
 import "google/api/annotations.proto";
 import "valkeru/api/privateApi/structures.proto";
 
-//Аутентификация пользователей, действия с токенами, паролями и прочее
 //Все методы требуют наличия токена в Authorization
 service SecurityService {
-    rpc changePassword (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc changePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
         option (google.api.http) = {
             patch: "/security/password"
             body: "*"
@@ -16,9 +15,39 @@ service SecurityService {
     }
 
     //Возвращает специальные короткоживущие токены для аутентификации с правами клиента
-    rpc getCustomerToken (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc getCustomerToken (CustomerTokenRequest) returns (CustomerTokenResponse) {
         option (google.api.http) = {
             get: "/security/customer-token/{id}"
         };
     }
+}
+
+message ChangePasswordRequest {
+    string new_password = 1;
+    string password_confirmation = 2;
+}
+
+//В случае успеха возвращает код 200 без тела
+message ChangePasswordResponse {
+    Error error = 1;
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+            INTERNAL_ERROR = 1;
+            INVALID_PASSWORD = 2;
+            PASSWORD_NOT_NATCH = 3;
+        }
+    }
+}
+
+message CustomerTokenRequest {
+    uint32 id = 1;
+}
+
+message CustomerTokenResponse {
+    string token = 1;
 }
