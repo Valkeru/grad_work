@@ -41,7 +41,7 @@ services:
     image: graylog/graylog:2.4
     ports:
       # Web-interface
-      - 9001:9000
+      - 9000:9000
     volumes:
       - graylog_data:/usr/share/graylog/data
       - ./udp-input-graylog.json:/usr/share/graylog/data/contentpacks/udp-input-graylog.json:ro

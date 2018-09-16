@@ -2,7 +2,7 @@ FROM ubuntu:bionic
 WORKDIR /var/www
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y php7.2-cli php7.2-curl php7.2-json php7.2-mysql \
-        php7.2-zip git netcat php7.2-xml wget mysql-client php7.2-fpm \
+        unzip php7.2-zip php7.2-mbstring git netcat php7.2-xml wget mysql-client php7.2-fpm less vim \
     && php -r "copy('https://getcomposer.org/installer', '/tmp/composer-setup.php');" \
     && php /tmp/composer-setup.php --install-dir=/usr/bin --filename=composer \
     && rm /tmp/composer-setup.php

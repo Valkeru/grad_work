@@ -40,16 +40,15 @@ message RegistrationResponse {
 
         enum Code {
             _ = 0;
-            INTERNAL_ERROR = 1;
-            USER_ALREADY_EXISTS = 2;
-            PASSWORD_TOO_WEAK = 3;
-            LOGIN_IS_BLANK = 4;
-            NAME_IS_BLANK = 5;
-            SURNAME_IS_BLANK = 6;
-            EMAIL_IS_BLANK = 7;
-            PHONE_IS_BLANK = 8;
-            PASSWORD_IS_BLANK = 9;
-            INVALID_PASSWORD = 10;
+            USER_ALREADY_EXISTS = 1;
+            PASSWORD_TOO_WEAK = 2;
+            LOGIN_IS_BLANK = 3;
+            NAME_IS_BLANK = 4;
+            SURNAME_IS_BLANK = 5;
+            EMAIL_IS_BLANK = 6;
+            PHONE_IS_BLANK = 7;
+            PASSWORD_IS_BLANK = 8;
+            INVALID_PASSWORD = 9;
         }
     }
 }

@@ -1,58 +1,59 @@
 syntax = 'proto3';
 
-package valkeru.api.publicApi.cron;
-option php_namespace = "Valkeru\\PublicApi\\Cron";
+package valkeru.api.privateApi.cron;
+option php_namespace = "Valkeru\\PrivateApi\\Cron";
 import "google/api/annotations.proto";
-import "valkeru/api/publicApi/structures.proto";
+import "valkeru/api/privateApi/structures.proto";
 
 service CronService {
     rpc taskList (TaskListRequest) returns (TaskListResponse) {
         option (google.api.http) = {
-            get: "/v1/cron"
+            get: "/cron/{cust_id}"
         };
     }
 
     rpc taskInfo (TaskInfoRequest) returns (TaskInfoResponse) {
         option (google.api.http) = {
-            get: "/v1/cron/{id}"
+            get: "/cron/{id}"
         };
     }
 
     rpc addTask (NewTaskRequest) returns (NewTaskResponse) {
         option (google.api.http) = {
-            put: "/v1/cron"
+            put: "/cron"
             body: "*"
         };
     }
 
     rpc deleteTask (DeleteTaskRequest) returns (DeleteTaskResponse) {
         option (google.api.http) = {
-            delete: "/v1/cron/{id}"
+            delete: "/cron/{id}"
             body: "*"
         };
     }
 
     rpc editTask (EditTaskRequest) returns (EditTaskResponse) {
         option (google.api.http) = {
-            post: "/v1/cron/{id}"
+            post: "/cron/{id}"
             body: "*"
         };
     }
 
     rpc enableTask (EnableTaskRequest) returns (EnableTaskResponse) {
         option (google.api.http) = {
-            get: "/v1/cron/{id}/enable"
+            get: "/cron/{id}/enable"
         };
     }
 
     rpc disableTask (DisableTaskRequest) returns (DisableTaskResponse) {
         option (google.api.http) = {
-            get: "/v1/cron/{id}/disable"
+            get: "/cron/{id}/disable"
         };
     }
 }
 
 message TaskListRequest {
+    uint32 cust_id = 1;
 }
 
 message TaskListResponse {
@@ -100,13 +101,14 @@ message TaskInfoResponse {
 }
 
 message NewTaskRequest {
-    repeated uint32 minutes = 1;
-    repeated uint32 hours = 2;
-    repeated uint32 days = 3;
-    repeated uint32 months = 4;
-    repeated uint32 weekdays = 5;
-    string command = 6;
-    bool disable = 7;
+    uint32 cust_id = 1;
+    repeated uint32 minutes = 2;
+    repeated uint32 hours = 3;
+    repeated uint32 days = 4;
+    repeated uint32 months = 5;
+    repeated uint32 weekdays = 6;
+    string command = 7;
+    bool disable = 8;
 }
 
 message NewTaskResponse {

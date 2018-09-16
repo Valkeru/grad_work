@@ -1,52 +1,53 @@
 syntax = 'proto3';
 
-package valkeru.api.publicApi.site;
-option php_namespace = "Valkeru\\PublicApi\\Site";
+package valkeru.api.privateApi.site;
+option php_namespace = "Valkeru\\PrivateApi\\Site";
 import "google/api/annotations.proto";
-import "valkeru/api/publicApi/structures.proto";
+import "valkeru/api/privateApi/structures.proto";
 
 service SiteService {
     rpc siteList (SiteListRequest) returns (SiteListResponse) {
         option (google.api.http) = {
-            get: "/v1/site"
+            post: "/site"
         };
     }
 
     rpc siteInfo (SiteInfoRequest) returns (SiteInfoResponse) {
         option (google.api.http) = {
-            get: "/v1/site/{id}"
+            get: "/site/{id}"
         };
     }
 
     rpc addSite (AddSiteRequest) returns (AddSiteResponse) {
         option (google.api.http) = {
-            put: "/v1/site"
+            put: "/site"
             body: "*"
         };
     }
 
     rpc deleteSite (DeleteSiteRequest) returns (DeleteSiteResponse) {
         option (google.api.http) = {
-            delete: "/v1/site/{id}"
+            delete: "/site/{id}"
         };
     }
 
     rpc attachDomain (AttachDomainRequest) returns (AttachDomainResponse) {
         option (google.api.http) = {
-            post: "/v1/site/{id}/attach-domain"
+            post: "/site/{id}/attach-domain"
             body: "*"
         };
     }
 
     rpc detachDomain (DetachDomainRequest) returns (DetachDomainResponse) {
         option (google.api.http) = {
-            post: "/v1/site/{id}/detach-domain"
+            post: "/site/{id}/detach-domain"
             body: "*"
         };
     }
 }
 
 message SiteListRequest {
+    uint32 cust_id = 1;
 }
 
 message SiteListResponse {
@@ -94,7 +95,8 @@ message SiteInfoResponse {
 }
 
 message AddSiteRequest {
-    string path = 1;
+    uint32 cust_id = 1;
+    string path = 2;
 }
 
 message AddSiteResponse {
@@ -158,6 +160,7 @@ message AttachDomainResponse {
 
         enum Code {
             _ = 0;
+            DOMAIN_NOT_BELONGS_TO_CUSTOMER = 1;
             DOMAIN_NOT_FOUND = 2;
         }
     }
@@ -184,6 +187,7 @@ message DetachDomainResponse {
 
         enum Code {
             _ = 0;
+            DOMAIN_NOT_BELONGS_TO_CUSTOMER = 1;
             DOMAIN_NOT_FOUND = 2;
         }
     }

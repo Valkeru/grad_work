@@ -65,7 +65,6 @@ message CreateEmployeeResponse {
 
         enum Code {
             _ = 0;
-            INTERNAL_ERROR = 1;
         }
     }
 }
@@ -93,7 +92,6 @@ message EditEmployeeResponse {
 
     enum Code {
         _ = 0;
-        INTERNAL_ERROR = 2;
     }
 }
 
@@ -101,13 +99,9 @@ message BlockEmployeeRequest {
     uint32 id = 1;
 }
 
+// Пустой ответ при успехе
 message BlockEmployeeResponse {
-    oneof response {
-        Success success = 1;
-        Error error = 2;
-    }
-
-    message Success {}
+    Error error = 2;
 
     message Error {
         Code code = 1;
@@ -116,8 +110,7 @@ message BlockEmployeeResponse {
 
     enum Code {
         _ = 0;
-        INTERNAL_ERROR = 1;
-        ALREADY_BLOCKED = 2;
+        ALREADY_BLOCKED = 1;
     }
 }
 
@@ -142,6 +135,5 @@ message EmployeeInfoResponse {
 
     enum Code {
         _ = 0;
-        INTERNAL_ERROR = 1;
     }
 }

@@ -1,14 +1,14 @@
 syntax = 'proto3';
 
-package valkeru.api.publicApi.mysql;
-option php_namespace = "Valkeru\\PublicApi\\Mysql";
+package valkeru.api.privateApi.mysql;
+option php_namespace = "Valkeru\\PrivateApi\\Mysql";
 import "google/api/annotations.proto";
-import "valkeru/api/publicApi/structures.proto";
+import "valkeru/api/privateApi/structures.proto";
 
 service MysqlService {
     rpc databaseList (DatabaseListRequest) returns (DatabaseListResponse) {
         option (google.api.http) = {
-            get: "/v1/mysql"
+            post: "/v1/mysql/{cust_id}"
         };
     }
 
@@ -54,6 +54,7 @@ service MysqlService {
 }
 
 message DatabaseListRequest {
+    uint32 cust_id = 1;
 }
 
 message DatabaseListResponse {
@@ -101,8 +102,9 @@ message DatabaseInfoResponse {
 }
 
 message AddDatabaseRequest {
-    string suffix = 1;
-    string password = 2;
+    uint32 cust_id = 1;
+    string suffix = 2;
+    string password = 3;
 }
 
 message AddDatabaseResponse {

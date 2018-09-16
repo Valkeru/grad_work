@@ -9,7 +9,6 @@
 namespace App\Controller\PublicApi\v1;
 
 use App\Entity\Customer;
-use App\Entity\IssuedToken;
 use App\Event\customer\CustomerTokenInvalidateEvent;
 use App\Helpers\BearerHelper;
 use App\Service\SecurityService;
@@ -44,6 +43,7 @@ use Valkeru\PublicApi\Auth\{
  * @package App\Controller\PublicApi\v1
  *
  * @Route("/auth")
+ * @method Customer getUser()
  */
 class AuthController extends Controller
 {
@@ -128,7 +128,6 @@ class AuthController extends Controller
     public function actionLogout(LogoutRequest $logoutRequest, Request $request): JsonResponse
     {
         $tokenString = BearerHelper::extractTokenString($request);
-        /** @var Customer $customer */
         $customer = $this->getUser();
 
         $event = new CustomerTokenInvalidateEvent($customer, $tokenString);

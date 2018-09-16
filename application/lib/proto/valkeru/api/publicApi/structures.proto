@@ -8,6 +8,26 @@ message DummyMessage {
 
 }
 
+message DummyResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+        }
+    }
+}
+
 message Customer {
     uint32 id = 1;
     string login = 2;
@@ -16,4 +36,49 @@ message Customer {
     string phone = 5;
     bool is_blocked = 7;
     uint32 server_id = 8;
+}
+
+message Domain {
+    uint32 id = 1;
+    string fqdn = 2;
+    uint32 site_id = 3;
+    bool is_blocked = 4;
+    repeated Mailbox mailboxes = 5;
+}
+
+message Site {
+    uint32 id = 1;
+    string path = 2;
+    repeated Domain domains = 3;
+}
+
+message Mailbox {
+    uint32 id = 1;
+    string name = 2;
+    uint32 domain_id = 3;
+}
+
+message CronTask {
+    uint32 id = 1;
+    repeated uint32 minutes = 2;
+    repeated uint32 hours = 3;
+    repeated uint32 days = 4;
+    repeated uint32 months = 5;
+    repeated uint32 weekdays = 6;
+    string command = 7;
+    bool enabled = 8;
+}
+
+message FtpAccount {
+    uint32 id = 1;
+    string suffix = 2;
+    string path = 3;
+    bool ssh_enabled = 4;
+}
+
+message MysqlDatabase {
+    uint32 id = 1;
+    string suffix = 2;
+    //Хосты, с которых разрешено подключение к базе
+    repeated string allowed_hosts = 3;
 }

@@ -56,6 +56,12 @@
     "doctrine/orm": {
         "version": "v2.6.1"
     },
+    "giggsey/libphonenumber-for-php": {
+        "version": "8.9.12"
+    },
+    "giggsey/locale": {
+        "version": "1.5"
+    },
     "google/protobuf": {
         "version": "v3.6.0.1"
     },
@@ -70,6 +76,9 @@
     },
     "lcobucci/jwt": {
         "version": "3.2.2"
+    },
+    "misd/phone-number-bundle": {
+        "version": "v1.3.2"
     },
     "monolog/monolog": {
         "version": "1.23.0"

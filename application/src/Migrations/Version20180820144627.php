@@ -2,7 +2,6 @@
 
 namespace DoctrineMigrations;
 
-use App\Entity\Customer;
 use App\Entity\Employee;
 use App\Entity\Server;
 use Doctrine\DBAL\Migrations\IrreversibleMigrationException;
@@ -13,12 +12,11 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Подготовка системы к работе на пустой БД: создание администратора, серверов и демо-юзера
+ * Подготовка системы к работе на пустой БД
  */
 final class Version20180820144627 extends AbstractMigration implements ContainerAwareInterface
 {
     private const DEFAULT_ROOT_PASSWORD      = '2mx66ALa0DgoPOQs';
-    private const DEFAULT_DEMO_USER_PASSWORD = 'HlwtxwngEO5vQe8M';
 
     /**
      * @var EntityManager
@@ -48,7 +46,6 @@ final class Version20180820144627 extends AbstractMigration implements Container
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $root           = new Employee();
-        $customer       = new Customer();
         $rootServer     = new Server();
         $customerServer = new Server();
 
@@ -75,16 +72,9 @@ final class Version20180820144627 extends AbstractMigration implements Container
             ->setOutgoingIp('0.0.0.0')
             ->setRegistrationEnabled(true);
 
-        $customer->setServer($customerServer)
-            ->setName('John Doe')
-            ->setLogin('demo')
-            ->setEmail('demo@example.com')
-            ->setPassword(self::DEFAULT_DEMO_USER_PASSWORD)
-            ->setPhone('+71234567890');
-
         $this->em->persist($root);
         $this->em->persist($rootServer);
-        $this->em->persist($customer);
+        $this->em->persist($customerServer);
         $this->em->flush();
     }
 

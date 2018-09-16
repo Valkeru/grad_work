@@ -8,6 +8,7 @@
 
 namespace App\Controller\PublicApi\v1;
 
+use App\Entity\Customer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,6 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/ftp")
  * @Security("has_role('ROLE_CUSTOMER')")
+ * @method Customer getUser()
  */
 class FtpController extends Controller
 {

@@ -8,6 +8,7 @@
 
 namespace App\Controller\PublicApi\v1;
 
+use App\Entity\Customer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,6 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @package App\Controller\PublicApi\v1
  * @Route("/mail")
  * @Security("has_role('ROLE_CUSTOMER')")
+ * @method Customer getUser()
  */
 class MailController extends Controller
 {

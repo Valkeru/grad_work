@@ -12,7 +12,10 @@ use App\Entity\Base\BaseEntity;
 use App\Helpers\PasswordHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Lcobucci\JWT\Token;
+use libphonenumber\PhoneNumber;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Constraints as Assert;
+use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 /**
  * Class Customer
@@ -27,6 +30,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Customer extends BaseEntity
 {
+    public const DEMO_LOGIN = 'demo';
+
     /**
      * @var int
      *
@@ -65,12 +70,11 @@ class Customer extends BaseEntity
     private $email;
 
     /**
-     * @var string
+     * @var PhoneNumber
      *
-     * @ORM\Column(name="phone", type="string", length=20, nullable=false)
+     * @ORM\Column(name="phone", type="phone_number", length=20, nullable=false)
      *
-     * @Assert\NotBlank()
-     * @Assert\Regex(pattern="/^\+\d+$/", message="Invalid phone format")
+     * @AssertPhoneNumber(type="mobile")
      */
     private $phone;
 
@@ -188,19 +192,19 @@ class Customer extends BaseEntity
     }
 
     /**
-     * @return string
+     * @return PhoneNumber
      */
-    public function getPhone(): string
+    public function getPhone(): PhoneNumber
     {
         return $this->phone;
     }
 
     /**
-     * @param string $phone
+     * @param PhoneNumber $phone
      *
      * @return Customer
      */
-    public function setPhone(string $phone): self
+    public function setPhone(PhoneNumber $phone): self
     {
         $this->phone = $phone;
 

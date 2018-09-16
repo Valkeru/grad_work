@@ -3,7 +3,6 @@ syntax = 'proto3';
 package valkeru.api.privateApi.auth;
 option php_namespace = "Valkeru\\PrivateApi\\Auth";
 import "google/api/annotations.proto";
-import "valkeru/api/privateApi/structures.proto";
 
 service AuthService {
     rpc login (LoginRequest) returns (LoginResponse) {

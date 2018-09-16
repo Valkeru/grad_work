@@ -8,6 +8,7 @@
 
 namespace App\Controller\PrivateApi;
 
+use App\Entity\Employee;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,6 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @package App\Controller\PrivateApi
  *
  * @Route("/employee")
+ * @method Employee getUser()
  */
 class EmployeeController extends Controller
 {

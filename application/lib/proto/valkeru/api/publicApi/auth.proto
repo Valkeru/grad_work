@@ -3,10 +3,9 @@ syntax = 'proto3';
 package valkeru.api.publicApi.auth;
 option php_namespace = "Valkeru\\PublicApi\\Auth";
 import "google/api/annotations.proto";
-import "valkeru/api/publicApi/structures.proto";
 
 service AuthService {
-    rpc login (structures.DummyMessage) returns (structures.DummyMessage) {
+    rpc login (LoginRequest) returns (LoginResponse) {
         option (google.api.http) = {
             post: "/v1/auth/login"
             body: "*"
@@ -41,15 +40,13 @@ message LoginResponse {
 
         enum Code {
             _ = 0;
-            INTERNAL_ERROR = 1;
-            INVALID_CREDENTIALS = 2;
-            EMPTY_CREDENTIALS = 3;
+            INVALID_CREDENTIALS = 1;
+            EMPTY_CREDENTIALS = 2;
         }
     }
 }
 
 message LogoutRequest {
-
 }
 
 message LogoutResponse {
@@ -68,7 +65,6 @@ message LogoutResponse {
 
         enum Code {
             _ = 0;
-            INTERNAL_ERROR = 1;
         }
     }
 }

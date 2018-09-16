@@ -1,48 +1,49 @@
 syntax = 'proto3';
 
-package valkeru.api.publicApi.mail;
-option php_namespace = "Valkeru\\PublicApi\\Mail";
+package valkeru.api.privateApi.mail;
+option php_namespace = "Valkeru\\PrivateApi\\Mail";
 import "google/api/annotations.proto";
-import "valkeru/api/publicApi/structures.proto";
+import "valkeru/api/privateApi/structures.proto";
 
 service MailService {
     rpc mailboxList (MailboxListRequest) returns (MailboxListResponse) {
         option (google.api.http) = {
-            post: "/v1/mail"
+            post: "/mail"
             body: "*"
         };
     }
 
     rpc mailboxInfo (MailboxInfoRequest) returns (MailboxInfoResponse) {
         option (google.api.http) = {
-            get: "/v1/mail/{id}"
+            get: "/mail/{id}"
         };
     }
 
     rpc addMailbox (AddMailboxRequest) returns (AddMailboxResponse) {
         option (google.api.http) = {
-            put: "/v1/mail/new"
+            put: "/mail/new"
             body: "*"
         };
     }
 
     rpc deleteMailbox (DeleteMailboxRequest) returns (DeleteMailboxResponse) {
         option (google.api.http) = {
-            delete: "/v1/mail/{id}"
+            delete: "/mail/{id}"
             body: "*"
         };
     }
 
     rpc changeMailboxPassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
         option (google.api.http) = {
-            post: "/v1/mail/{id}/change-password"
+            post: "/mail/{id}/change-password"
             body: "*"
         };
     }
 }
 
 message MailboxListRequest {
-    uint32 domain_id = 1;
+    uint32 cust_id = 1;
+    uint32 domain_id = 2;
 }
 
 message MailboxListResponse {
@@ -90,9 +91,10 @@ message MailboxInfoResponse {
 }
 
 message AddMailboxRequest {
-    string name = 1;
-    string password = 2;
-    uint32 domain_id = 3;
+    uint32 cust_id = 1;
+    string name = 2;
+    string password = 3;
+    uint32 domain_id = 4;
 }
 
 message AddMailboxResponse {

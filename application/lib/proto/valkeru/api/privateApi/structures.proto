@@ -3,6 +3,10 @@ syntax = 'proto3';
 package valkeru.api.privateApi.structures;
 option php_namespace = "Valkeru\\PrivateApi\\Structures";
 
+message DummyMessage {
+
+}
+
 message Employee {
     uint32 id = 1;
     string login = 2;
@@ -22,4 +26,55 @@ message Customer {
     string registration_date = 6;
     bool is_blocked = 7;
     string server_id = 8;
+}
+
+message Domain {
+    Customer customer = 1;
+    uint32 id = 2;
+    string fqdn = 3;
+    uint32 site_id = 4;
+    bool is_blocked = 5;
+    repeated Mailbox mailboxes = 6;
+}
+
+message Site {
+    Customer customer = 1;
+    uint32 id = 2;
+    string path = 3;
+    repeated Domain domains = 4;
+}
+
+message Mailbox {
+    Customer customer = 1;
+    uint32 id = 2;
+    string name = 3;
+    uint32 domain_id = 4;
+}
+
+message CronTask {
+    Customer customer = 1;
+    uint32 id = 2;
+    repeated uint32 minutes = 3;
+    repeated uint32 hours = 4;
+    repeated uint32 days = 5;
+    repeated uint32 months = 6;
+    repeated uint32 weekdays = 7;
+    string command = 8;
+    bool enabled = 9;
+}
+
+message FtpAccount {
+    Customer customer = 1;
+    uint32 id = 2;
+    string suffix = 3;
+    string path = 4;
+    bool ssh_enabled = 5;
+}
+
+message MysqlDatabase {
+    Customer customer = 1;
+    uint32 id = 2;
+    string suffix = 3;
+    //Хосты, с которых разрешено подключение к базе
+    repeated string allowed_hosts = 4;
 }

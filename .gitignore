@@ -8,4 +8,3 @@
 ###< symfony/framework-bundle ###
 /application/lib/api/*
 !/application/lib/api/.gitkeep
-docker/build-grpc

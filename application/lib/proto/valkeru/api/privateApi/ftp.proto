@@ -1,62 +1,62 @@
 syntax = 'proto3';
 
-package valkeru.api.publicApi.site;
-option php_namespace = "Valkeru\\PublicApi\\Site";
+package valkeru.api.privateApi.ftp;
+option php_namespace = "Valkeru\\PrivateApi\\Ftp";
 import "google/api/annotations.proto";
-import "valkeru/api/publicApi/structures.proto";
+import "valkeru/api/privateApi/structures.proto";
 
-service SiteService {
-    rpc siteList (SiteListRequest) returns (SiteListResponse) {
+service FtpService {
+    rpc accountList (AccountListRequest) returns (AccountListResponse) {
         option (google.api.http) = {
-            get: "/v1/site"
+            post: "/ftp"
         };
     }
 
-    rpc siteInfo (SiteInfoRequest) returns (SiteInfoResponse) {
+    rpc accountInfo (AccountInfoRequest) returns (AccountInfoResponse) {
         option (google.api.http) = {
-            get: "/v1/site/{id}"
+            get: "/ftp/{id}"
         };
     }
 
-    rpc addSite (AddSiteRequest) returns (AddSiteResponse) {
+    rpc addAccount (AddAccountRequest) returns (AddAccountResponse) {
         option (google.api.http) = {
-            put: "/v1/site"
+            put: "/ftp/new"
             body: "*"
         };
     }
 
-    rpc deleteSite (DeleteSiteRequest) returns (DeleteSiteResponse) {
+    rpc deleteAccount (DeleteAccountRequest) returns (DeleteAccountResponse) {
         option (google.api.http) = {
-            delete: "/v1/site/{id}"
-        };
-    }
-
-    rpc attachDomain (AttachDomainRequest) returns (AttachDomainResponse) {
-        option (google.api.http) = {
-            post: "/v1/site/{id}/attach-domain"
+            delete: "/ftp/{id}"
             body: "*"
         };
     }
 
-    rpc detachDomain (DetachDomainRequest) returns (DetachDomainResponse) {
+    rpc enableSsh (EnableSshRequest) returns (EnableSshResponse) {
         option (google.api.http) = {
-            post: "/v1/site/{id}/detach-domain"
-            body: "*"
+            get: "/ftp/{id}/enable-ssh"
+        };
+    }
+
+    rpc disableSsh (DisableSshRequest) returns (DisableSshResponse) {
+        option (google.api.http) = {
+            get: "/ftp/{id}/disable-ssh"
         };
     }
 }
 
-message SiteListRequest {
+message AccountListRequest {
+    uint32 cust_id = 1;
 }
 
-message SiteListResponse {
+message AccountListResponse {
     oneof result {
         Success success = 1;
         Error error = 2;
     }
 
     message Success {
-        repeated structures.Site sites = 1;
+        repeated structures.FtpAccount accounts = 1;
     }
 
     message Error {
@@ -69,18 +69,18 @@ message SiteListResponse {
     }
 }
 
-message SiteInfoRequest {
+message AccountInfoRequest {
     uint32 id = 1;
 }
 
-message SiteInfoResponse {
+message AccountInfoResponse {
     oneof result {
         Success success = 1;
         Error error = 2;
     }
 
     message Success {
-        structures.Site site = 1;
+        structures.FtpAccount account = 1;
     }
 
     message Error {
@@ -93,18 +93,21 @@ message SiteInfoResponse {
     }
 }
 
-message AddSiteRequest {
-    string path = 1;
+message AddAccountRequest {
+    uint32 cust_id = 1;
+    string suffix = 2;
+    string path = 3;
+    string password = 4;
 }
 
-message AddSiteResponse {
+message AddAccountResponse {
     oneof result {
         Success success = 1;
         Error error = 2;
     }
 
     message Success {
-        structures.Site site = 1;
+        structures.FtpAccount account = 1;
     }
 
     message Error {
@@ -113,19 +116,40 @@ message AddSiteResponse {
 
         enum Code {
             _ = 0;
-            SITE_EXISTS = 1;
-            INVALID_PATH = 2;
         }
     }
 }
 
-message DeleteSiteRequest {
+message DeleteAccountRequest {
     uint32 id = 1;
 }
 
 // Пустой ответ при успехе
-message DeleteSiteResponse {
+message DeleteAccountResponse {
     Error error = 2;
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+        }
+    }
+}
+
+message EnableSshRequest {
+    uint32 id = 1;
+}
+
+message EnableSshResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        structures.FtpAccount account = 1;
+    }
 
     message Error {
         Code code = 1;
@@ -137,19 +161,18 @@ message DeleteSiteResponse {
     }
 }
 
-message AttachDomainRequest {
+message DisableSshRequest {
     uint32 id = 1;
-    uint32 domain_id = 2;
 }
 
-message AttachDomainResponse {
+message DisableSshResponse {
     oneof result {
         Success success = 1;
         Error error = 2;
     }
 
     message Success {
-        structures.Site site = 1;
+        structures.FtpAccount account = 1;
     }
 
     message Error {
@@ -158,33 +181,6 @@ message AttachDomainResponse {
 
         enum Code {
             _ = 0;
-            DOMAIN_NOT_FOUND = 2;
-        }
-    }
-}
-
-message DetachDomainRequest {
-    uint32 id = 1;
-    uint32 domain_id = 2;
-}
-
-message DetachDomainResponse {
-    oneof result {
-        Success success = 1;
-        Error error = 2;
-    }
-
-    message Success {
-        structures.Site site = 1;
-    }
-
-    message Error {
-        Code code = 1;
-        string message = 2;
-
-        enum Code {
-            _ = 0;
-            DOMAIN_NOT_FOUND = 2;
         }
     }
 }

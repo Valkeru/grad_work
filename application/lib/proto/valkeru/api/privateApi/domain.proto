@@ -1,27 +1,28 @@
 syntax = 'proto3';
 
-package valkeru.api.publicApi.domain;
-option php_namespace = "Valkeru\\PublicApi\\Domain";
+package valkeru.api.privateApi.domain;
+option php_namespace = "Valkeru\\PrivateApi\\Domain";
 import "google/api/annotations.proto";
-import "valkeru/api/publicApi/structures.proto";
+import "valkeru/api/privateApi/structures.proto";
 
 service DomainService {
     rpc addDomain (AddDomainRequest) returns (AddDomainResponse) {
         option (google.api.http) = {
-            put: "/v1/domain"
+            put: "/domain"
             body: "*"
         };
     }
 
     rpc deleteDomain (DeleteDomainRequest) returns (DeleteDomainResponse) {
         option (google.api.http) = {
-            delete: "/v1/domain/{id}"
+            delete: "/domain/{id}"
         };
     }
 }
 
 message AddDomainRequest {
-    string fqdn = 1;
+    uint32 cust_id = 1;
+    string fqdn = 2;
 }
 
 message AddDomainResponse {
