@@ -46,9 +46,11 @@ message RegistrationResponse {
             NAME_IS_BLANK = 4;
             SURNAME_IS_BLANK = 5;
             EMAIL_IS_BLANK = 6;
-            PHONE_IS_BLANK = 7;
-            PASSWORD_IS_BLANK = 8;
-            INVALID_PASSWORD = 9;
+            INVALID_EMAIL = 7;
+            PHONE_IS_BLANK = 8;
+            INVALID_PHONE = 9;
+            PASSWORD_IS_BLANK = 10;
+            INVALID_PASSWORD = 11;
         }
     }
 }

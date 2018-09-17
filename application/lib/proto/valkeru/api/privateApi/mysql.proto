@@ -8,46 +8,46 @@ import "valkeru/api/privateApi/structures.proto";
 service MysqlService {
     rpc databaseList (DatabaseListRequest) returns (DatabaseListResponse) {
         option (google.api.http) = {
-            post: "/v1/mysql/{cust_id}"
+            post: "/mysql/{cust_id}"
         };
     }
 
     rpc databaseInfo (DatabaseInfoRequest) returns (DatabaseInfoResponse) {
         option (google.api.http) = {
-            get: "/v1/mysql/{id}"
+            get: "/mysql/{id}"
         };
     }
 
     rpc addDatabase (AddDatabaseRequest) returns (AddDatabaseResponse) {
         option (google.api.http) = {
-            put: "/v1/mysql/new"
+            put: "/mysql/new"
             body: "*"
         };
     }
 
     rpc deleteDatabase (DeleteDatabaseRequest) returns (DeleteDatabaseResponse) {
         option (google.api.http) = {
-            delete: "/v1/mysql/{id}"
+            delete: "/mysql/{id}"
         };
     }
 
     rpc addRemoteAccess (AddRemoteAccessRequest) returns (AddRemoteAccessResponse) {
         option (google.api.http) = {
-            put: "/v1/mysql/access"
+            put: "/mysql/access"
             body: "*"
         };
     }
 
     rpc removeRemoteAccess (RemoveRemoteAccessRequest) returns (RemoveRemoteAccessResponse) {
         option (google.api.http) = {
-            delete: "/v1/mysql/access"
+            delete: "/mysql/access"
             body: "*"
         };
     }
 
     rpc changeAccessPassword (structures.DummyMessage) returns (structures.DummyMessage) {
         option (google.api.http) = {
-            post: "/v1/mysql/password"
+            post: "/mysql/password"
             body: "*"
         };
     }

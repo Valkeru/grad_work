@@ -35,3 +35,35 @@ services:
     arguments:
     - '@request_stack'
     - '\Valkeru\PublicApi\Security\TokenInfoRequest'
+
+  Valkeru\PublicApi\Security\BlacklistTokenRequest:
+    factory:
+    - '@App\Factory\PublicApiFactory'
+    - 'makePublicApiRequest'
+    arguments:
+    - '@request_stack'
+    - '\Valkeru\PublicApi\Security\BlacklistTokenRequest'
+
+  Valkeru\PublicApi\Security\InvalidateAllTokensRequest:
+    factory:
+    - '@App\Factory\PublicApiFactory'
+    - 'makePublicApiRequest'
+    arguments:
+    - '@request_stack'
+    - '\Valkeru\PublicApi\Security\InvalidateAllTokensRequest'
+
+  Valkeru\PublicApi\Security\ChangePasswordRequest:
+    factory:
+    - '@App\Factory\PublicApiFactory'
+    - 'makePublicApiRequest'
+    arguments:
+    - '@request_stack'
+    - '\Valkeru\PublicApi\Security\ChangePasswordRequest'
+
+  Valkeru\PublicApi\Security\PublicKeyRequest:
+    factory:
+    - '@App\Factory\PublicApiFactory'
+    - 'makePublicApiRequest'
+    arguments:
+    - '@request_stack'
+    - '\Valkeru\PublicApi\Security\PublicKeyRequest'

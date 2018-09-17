@@ -8,20 +8,34 @@
 
 namespace App\Controller\PublicApi\v1;
 
+use App\Entity\Customer;
+use App\Service\SecurityService;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Token;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Valkeru\PublicApi\Security\BlacklistTokenRequest;
 use Valkeru\PublicApi\Security\ChangePasswordRequest;
+use Valkeru\PublicApi\Security\ChangePasswordResponse;
+use Valkeru\PublicApi\Security\ChangePasswordResponse_Error;
+use Valkeru\PublicApi\Security\ChangePasswordResponse_Error_Code;
+use Valkeru\PublicApi\Security\ChangePasswordResponse_Success;
 use Valkeru\PublicApi\Security\InvalidateAllTokensRequest;
+use Valkeru\PublicApi\Security\InvalidateAllTokensResponse;
+use Valkeru\PublicApi\Security\InvalidateAllTokensResponse_Success;
+use Valkeru\PublicApi\Security\PublicKeyRequest;
+use Valkeru\PublicApi\Security\PublicKeyResponse;
+use Valkeru\PublicApi\Security\PublicKeyResponse_Success;
 use Valkeru\PublicApi\Security\TokenInfoRequest;
 use Valkeru\PublicApi\Security\TokenInfoResponse;
 
 /**
  * Class SecurityController
+ *
+ * @method Customer getUser();
  *
  * @package App\Controller\PublicApi\v1
  *
@@ -33,15 +47,33 @@ use Valkeru\PublicApi\Security\TokenInfoResponse;
 class SecurityController extends Controller
 {
     /**
-     * @Route(methods={"GET"})
+     * @var SecurityService
      */
-    public function getPublicKey(): JsonResponse
-    {
-        $key = new Key('file://' . $this->getParameter('app.public.public_key'));
+    private $securityService;
 
-        return new JsonResponse([
-            'key' => $key->getContent()
-        ]);
+    /**
+     * SecurityController constructor.
+     *
+     * @param SecurityService $securityService
+     */
+    public function __construct(SecurityService $securityService)
+    {
+        $this->securityService = $securityService;
+    }
+
+    /**
+     * @Route("/public-key", methods={"GET"})
+     *
+     * @param PublicKeyRequest $request
+     * @return JsonResponse
+     */
+    public function getPublicKey(PublicKeyRequest $request): JsonResponse
+    {
+        $response = new PublicKeyResponse();
+        $key = new Key('file://' . $this->getParameter('app.public.public_key'));
+        $response->setSuccess((new PublicKeyResponse_Success())->setKey($key->getContent()));
+
+        return JsonResponse::fromJsonString($response->serializeToJsonString());
     }
 
     /**
@@ -65,33 +97,43 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/blacklist-token", methods={"GET"})
+     * @Route("/blacklist-token", methods={"POST"})
      *
      * @param BlacklistTokenRequest $request
      *
      * @return JsonResponse
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function actionBlacklistToken(BlacklistTokenRequest $request): JsonResponse
+    public function actionBlacklistToken(BlacklistTokenRequest $request): Response
     {
         if (($uuid = $request->getUuid()) === '') {
             $uuid = $this->getUser()->getToken()->getClaim('uuid');
         }
 
+        $this->securityService->blacklistCustomerToken($this->getUser(), $uuid);
 
-
-        return JsonResponse::fromJsonString('{}');
+        return new Response();
     }
 
     /**
-     * @Route("/blacklist-token/all", methods={"POST"})
+     * @Route("/invalidate-all-tokens", methods={"POST"})
      *
      * @param InvalidateAllTokensRequest $request
      *
      * @return JsonResponse
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Exception
      */
     public function actionInvalidateAllokens(InvalidateAllTokensRequest $request): JsonResponse
     {
-        return JsonResponse::fromJsonString('{}');
+        $response = new InvalidateAllTokensResponse();
+        $token = $this->securityService->invalidateAllCustomerTokens($this->getUser());
+        $response->setSuccess(
+            (new InvalidateAllTokensResponse_Success())->setToken((string)$token)
+        );
+
+        return JsonResponse::fromJsonString($response->serializeToJsonString());
     }
 
     /**
@@ -100,9 +142,33 @@ class SecurityController extends Controller
      * @param ChangePasswordRequest $request
      *
      * @return JsonResponse
+     * @throws \Exception
      */
     public function actionChangePassword(ChangePasswordRequest $request): JsonResponse
     {
-        return JsonResponse::fromJsonString('{}');
+        $response = new ChangePasswordResponse();
+        $result = $this->securityService->changeCustomerPassword($this->getUser(), $request);
+
+        if ($result !== true) {
+            $response->setError(
+                new ChangePasswordResponse_Error()
+            );
+
+            switch ($result['code']) {
+                case SecurityService::PASSWORD_AND_CONFIRMATION_NOT_MATCHED:
+                    $response->getError()->setCode(ChangePasswordResponse_Error_Code::NEW_PASSWORDS_IS_NOT_SAME);
+            }
+
+            $response->getError()->setMessage($result['message']);
+
+            return JsonResponse::fromJsonString($response->serializeToJsonString());
+        }
+
+        $token = $this->securityService->authenticateCustomer($this->getUser());
+        $response->setSuccess(
+            (new ChangePasswordResponse_Success())->setToken((string)$token)
+        );
+
+        return JsonResponse::fromJsonString($response->serializeToJsonString());
     }
 }

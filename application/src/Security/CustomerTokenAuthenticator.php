@@ -17,8 +17,8 @@ use App\Exception\InvalidTokenException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Cache\Simple\RedisCache;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
@@ -43,10 +43,6 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
      */
     public function __construct(ContainerInterface $container)
     {
-        if (!(bool)$container->getParameter('app.public_enabled')) {
-            throw new UnauthorizedHttpException('');
-        }
-
         $this->publicKeyFile = 'file://' . $container->getParameter('app.public.public_key');
         $this->cache         = $container->get('app.cache.customer_token_blacklist');
     }
@@ -56,14 +52,13 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
      * @param         $providerKey
      *
      * @return PreAuthenticatedToken
-     * @throws UnauthorizedHttpException
      */
     public function createToken(Request $request, $providerKey): PreAuthenticatedToken
     {
         $tokenString = BearerHelper::extractTokenString($request);
 
         if (empty($tokenString)) {
-            throw new UnauthorizedHttpException('');
+            throw new AccessDeniedHttpException(NULL);
         }
 
         return new PreAuthenticatedToken('unknown_customer', $tokenString, $providerKey);
@@ -75,7 +70,6 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
      * @param                       $providerKey
      *
      * @return PreAuthenticatedToken
-     * @throws UnauthorizedHttpException
      * @throws InvalidTokenException
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
@@ -92,12 +86,20 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
         }
 
         if (!$jwt->verify($signer, $publicKey) || $jwt->isExpired()) {
-            throw new UnauthorizedHttpException('');
+            throw new AccessDeniedHttpException(NULL);
         }
 
         try {
             /** @var Customer $user */
-            $user              = $userProvider->loadUserByUsername($jwt->getClaim('userName'));
+            $user = $userProvider->loadUserByUsername($jwt->getClaim('userName'));
+
+            $iat = (new \DateTime())->setTimestamp($jwt->getClaim('iat'));
+            if ($iat < $user->getAccountStatus()->getTokensInvalidationDate()
+                || $iat < $user->getAccountStatus()->getPasswordChangeDate()
+            ) {
+                throw new AccessDeniedHttpException(NULL);
+            }
+
             $now               = new \DateTime();
             $tokenUuid         = $jwt->getClaim('uuid');
             $blacklistedTokens = $this->cache->get((string)$user->getId(), []);
@@ -109,11 +111,11 @@ class CustomerTokenAuthenticator implements SimplePreAuthenticatorInterface
                 }
 
                 if ($uuid === $tokenUuid) {
-                    throw new UnauthorizedHttpException('');
+                    throw new AccessDeniedHttpException(NULL);
                 }
             }
         } catch (UsernameNotFoundException $e) {
-            throw new UnauthorizedHttpException('');
+            throw new AccessDeniedHttpException(NULL);
         }
 
         $user->setToken($jwt);

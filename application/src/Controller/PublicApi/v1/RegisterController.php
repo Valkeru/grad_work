@@ -10,13 +10,20 @@ namespace App\Controller\PublicApi\v1;
 
 use App\ApiMapper\CustomerMapper;
 use App\Event\customer\CustomerRegistrationFinishedEvent;
+use App\Service\SecurityService;
 use Lcobucci\JWT\Token;
 use App\Entity\Customer;
 use App\Service\RegistrationService;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberUtil;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\RecursiveValidator;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Valkeru\PublicApi\Registration\RegistrationRequest;
 use Valkeru\PublicApi\Registration\RegistrationResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -31,12 +38,11 @@ use Valkeru\PublicApi\Registration\RegistrationResponse_Error_Code;
  *
  * @package App\Controller\PublicApi\v1
  *
+ * @Security("request.server.get('PUBLIC_ENABLED') === '1'", message="Under maintenance. Please try later")
  * @Route("/register")
  */
 class RegisterController extends Controller
 {
-    private const PASSWORD_REGEX = 'A-z\d\{\}\/|\\_\(\)&%\#\^\-\+\=';
-
     /**
      * @var RegistrationService
      */
@@ -47,10 +53,19 @@ class RegisterController extends Controller
      */
     private $dispatcher;
 
-    public function __construct(RegistrationService $registrationService, EventDispatcherInterface $dispatcher)
+    /**
+     * @var RecursiveValidator
+     */
+    private $validator;
+
+    public function __construct(RegistrationService $registrationService,
+                                EventDispatcherInterface $dispatcher,
+                                ValidatorInterface $validator
+    )
     {
         $this->registrationService = $registrationService;
         $this->dispatcher          = $dispatcher;
+        $this->validator           = $validator;
     }
 
     /**
@@ -60,13 +75,13 @@ class RegisterController extends Controller
      * @return JsonResponse
      * @throws \Exception
      */
-    public function actionIndex(RegistrationRequest $request): JsonResponse
+    public function actionIndex(RegistrationRequest $request): Response
     {
         $response          = new RegistrationResponse();
         $registrationError = $this->validateRequest($request, $response);
 
         if ($registrationError->getCode() !== RegistrationResponse_Error_Code::_) {
-            return JsonResponse::fromJsonString($response->serializeToJsonString(), Response::HTTP_BAD_REQUEST);
+            return JsonResponse::fromJsonString($response->serializeToJsonString());
         }
 
         try {
@@ -96,12 +111,7 @@ class RegisterController extends Controller
                 return new JsonResponse($message);
             }
 
-            $response->setError(
-                $registrationError->setCode(RegistrationResponse_Error_Code::INTERNAL_ERROR)
-                    ->setMessage('Internal server error. Please contact support')
-            );
-
-            return JsonResponse::fromJsonString($response->serializeToJsonString());
+            return new Response(NULL, Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch (\Exception $exception) {
             throw $exception;
         }
@@ -112,10 +122,15 @@ class RegisterController extends Controller
      * @param RegistrationResponse $response
      *
      * @return RegistrationResponse_Error
+     *
+     * @throws NumberParseException
      */
     private function validateRequest(RegistrationRequest $request, RegistrationResponse $response): RegistrationResponse_Error
     {
-        $registrationError = new RegistrationResponse_Error();
+        $registrationError     = new RegistrationResponse_Error();
+        $phoneNumberUtil       = PhoneNumberUtil::getInstance();
+        $emailConstraint       = new Assert\Email();
+        $emailConstraint->mode = $emailConstraint::VALIDATION_MODE_HTML5;
 
         if ($request->getName() === '') {
             $response->setError(
@@ -137,17 +152,27 @@ class RegisterController extends Controller
                 $registrationError->setCode(RegistrationResponse_Error_Code::EMAIL_IS_BLANK)
                     ->setMessage('Email is not set')
             );
+        } elseif (\count($this->validator->validate($request->getEmail(), $emailConstraint)) > 0) {
+            $response->setError(
+                $registrationError->setCode(RegistrationResponse_Error_Code::INVALID_EMAIL)
+                    ->setMessage('Email is invalid')
+            );
         } elseif ($request->getPhone() === '') {
             $response->setError(
                 $registrationError->setCode(RegistrationResponse_Error_Code::PHONE_IS_BLANK)
                     ->setMessage('Phone is not set')
+            );
+        } elseif (!$phoneNumberUtil->isValidNumber($phoneNumberUtil->parse($request->getPhone()))) {
+            $response->setError(
+                $registrationError->setCode(RegistrationResponse_Error_Code::INVALID_PHONE)
+                    ->setMessage('Phone number is invalid')
             );
         } elseif (($password = $request->getPassword()) === '') {
             $response->setError(
                 $registrationError->setCode(RegistrationResponse_Error_Code::PASSWORD_IS_BLANK)
                     ->setMessage('Password is not set')
             );
-        } elseif (!\preg_match(sprintf('#[%s]{8,}#', self::PASSWORD_REGEX), $password)) {
+        } elseif (!SecurityService::validateCustomerPassword($password)) {
             $response->setError(
                 $registrationError->setCode(RegistrationResponse_Error_Code::INVALID_PASSWORD)
                     ->setMessage('Password should has length at least 8 symbols and consist of symbols A-z, 0-9, {, }, /, |, \, _, (, ), &, %, #, ^, -, +, =,')

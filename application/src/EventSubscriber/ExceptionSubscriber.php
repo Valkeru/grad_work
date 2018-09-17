@@ -62,7 +62,6 @@ class ExceptionSubscriber implements EventSubscriberInterface
                 );
                 break;
             case NotFoundHttpException::class:
-            case AccessDeniedHttpException::class:
             case MethodNotAllowedHttpException::class:
                 /** @var HttpException $exception */
                 $event->setResponse(new Response(NULL, $exception->getStatusCode()));
@@ -89,6 +88,17 @@ class ExceptionSubscriber implements EventSubscriberInterface
                 $event->setResponse(new JsonResponse([
                     'message' => $previous->getMessage()
                 ], Response::HTTP_FORBIDDEN));
+                break;
+            case AccessDeniedHttpException::class:
+                if (empty($exception->getMessage())) {
+                    $event->setResponse(new Response(NULL, Response::HTTP_FORBIDDEN));
+                } else {
+                    $event->setResponse(
+                        new JsonResponse([
+                            'message' => $exception->getMessage()
+                        ], JsonResponse::HTTP_FORBIDDEN)
+                    );
+                }
                 break;
             default:
                 if (!$this->isInDebugMode) {

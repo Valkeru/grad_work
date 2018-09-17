@@ -10,6 +10,7 @@ namespace App\Service;
 
 use App\Entity\Customer;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use libphonenumber\PhoneNumberUtil;
 use Valkeru\PublicApi\Registration\RegistrationRequest;
 use Doctrine\ORM\{
     ORMException, EntityManager, EntityManagerInterface
@@ -39,6 +40,15 @@ class RegistrationService
         $this->serverService = $serverService;
     }
 
+    /**
+     * @param RegistrationRequest $request
+     *
+     * @return array
+     * @throws ORMException
+     * @throws UniqueConstraintViolationException
+     * @throws \libphonenumber\NumberParseException
+     * @throws \Exception
+     */
     public function registerCustomer(RegistrationRequest $request): array
     {
         $customer = (new Customer())
@@ -46,7 +56,7 @@ class RegistrationService
             ->setLogin($request->getLogin())
             ->setPassword($request->getPassword())
             ->setEmail($request->getEmail())
-            ->setPhone($request->getPhone())
+            ->setPhone(PhoneNumberUtil::getInstance()->parse($request->getPhone()))
             ->setServer($this->serverService->selectServerForNewCustomer());
 
         $this->entityManager->beginTransaction();

@@ -30,12 +30,7 @@ class ServerService
     public function selectServerForNewCustomer(): Server
     {
         $servers = $this->serverRepository->getServersForRegistration();
-        $found = \count($servers);
 
-        if ($found === 1) {
-            return $servers[0];
-        }
-
-        return $servers[random_int(0, $found - 1)];
+        return $servers[array_rand($servers)];
     }
 }

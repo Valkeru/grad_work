@@ -15,11 +15,8 @@ use App\Service\SecurityService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
-use Lcobucci\JWT\Parser;
-use Predis\Client as Predis;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Cache\Simple\RedisCache;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,6 +38,8 @@ use Valkeru\PublicApi\Auth\{
  * Class AuthController
  *
  * @package App\Controller\PublicApi\v1
+ *
+ * @Security("request.server.get('PUBLIC_ENABLED') === '1'", message="Under maintenance. Please try later")
  *
  * @Route("/auth")
  * @method Customer getUser()
@@ -89,7 +88,7 @@ class AuthController extends Controller
                     ->setMessage('Login or password should not be empty')
             );
 
-            return JsonResponse::fromJsonString($response->serializeToJsonString(), Response::HTTP_BAD_REQUEST);
+            return JsonResponse::fromJsonString($response->serializeToJsonString());
         }
 
         try {
@@ -123,7 +122,6 @@ class AuthController extends Controller
      * @param Request       $request
      *
      * @return JsonResponse
-     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function actionLogout(LogoutRequest $logoutRequest, Request $request): JsonResponse
     {

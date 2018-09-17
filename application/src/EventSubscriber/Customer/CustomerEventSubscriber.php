@@ -62,6 +62,11 @@ class CustomerEventSubscriber implements EventSubscriberInterface
         $this->logger->info(sprintf('Customer %s successfully registered', $event->getCustomer()));
     }
 
+    /**
+     * @param CustomerTokenInvalidateEvent $event
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
     public function onCustomerTokenInvalidate(CustomerTokenInvalidateEvent $event): void
     {
         $this->securityService->blacklistCustomerToken($event->getCustomer(), $event->getTokenString());

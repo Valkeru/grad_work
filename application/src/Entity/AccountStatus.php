@@ -48,6 +48,18 @@ class AccountStatus
     private $registrationDate;
 
     /**
+     * @var \DateTime|null
+     * @ORM\Column(type="datetime", nullable=true, nullable=true, options={"default":NULL})
+     */
+    private $tokensInvalidationDate;
+
+    /**
+     * @var \DateTime|null
+     * @ORM\Column(type="datetime", nullable=true, nullable=true, options={"default":NULL})
+     */
+    private $passwordChangeDate;
+
+    /**
      * AccountStatus constructor.
      */
     public function __construct()
@@ -97,5 +109,45 @@ class AccountStatus
     public function getRegistrationDate(): \DateTime
     {
         return $this->registrationDate;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getTokensInvalidationDate(): ?\DateTime
+    {
+        return $this->tokensInvalidationDate;
+    }
+
+    /**
+     * @param \DateTime $tokensInvalidationDate
+     *
+     * @return AccountStatus
+     */
+    public function setTokensInvalidationDate(\DateTime $tokensInvalidationDate): AccountStatus
+    {
+        $this->tokensInvalidationDate = $tokensInvalidationDate;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getPasswordChangeDate(): ?\DateTime
+    {
+        return $this->passwordChangeDate;
+    }
+
+    /**
+     * @param \DateTime $passwordChangeDate
+     *
+     * @return AccountStatus
+     */
+    public function setPasswordChangeDate(\DateTime $passwordChangeDate): AccountStatus
+    {
+        $this->passwordChangeDate = $passwordChangeDate;
+
+        return $this;
     }
 }

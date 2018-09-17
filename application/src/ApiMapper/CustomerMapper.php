@@ -9,6 +9,8 @@
 namespace App\ApiMapper;
 
 use App\Entity\Customer;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 use Valkeru\PublicApi\Structures\Customer as CustomerMessage;
 
 class CustomerMapper
@@ -21,11 +23,13 @@ class CustomerMapper
     public static function mapCustomer(Customer $customer): CustomerMessage
     {
         $customerMessage = new CustomerMessage();
+        $phoneNumberUtil = PhoneNumberUtil::getInstance();
+
         $customerMessage->setId($customer->getId())
             ->setLogin($customer->getLogin())
             ->setName($customer->getName())
             ->setEmail($customer->getEmail())
-            ->setPhone($customer->getPhone())
+            ->setPhone($phoneNumberUtil->format($customer->getPhone(), PhoneNumberFormat::E164))
             ->setIsBlocked($customer->getAccountStatus()->isBlocked());
 
         return $customerMessage;
