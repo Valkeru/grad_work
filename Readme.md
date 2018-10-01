@@ -17,9 +17,43 @@
 
 # Howto:
 
-Файлы для запуска проекта находятся в каталоге **docker**.  
+Файлы для запуска проекта находятся в каталоге **docker**. Все описанные далее команды выполняются в нём.  
 Конфиги Nginx для хоста — в **application/nginx-config** (впрочем, кроме проксирования запросов в контейнеры они ни хрена не делают)  
 Урлы для API: **public.api.local** и **internal.api.local**. Сменить их можно в **application/.env**. Упаси Вас Ктулху делать это где-то ещё.
+
+Собрать контейнеры (при первом запуске этот этап будет выполнен автоматически):
+```bash
+docker-compose build
+```
+
+Обычный запуск проекта:  
+```bash
+docker-compose up -d
+```
+
+Для тестирования необходимо также поднять отдельный контейнер с тестовой базой:
+```bash
+docker-compose -f docker-compose.yml -f docker-compose-test.yml up -d
+```
+
+Просмотр логов контейнера:
+```bash
+docker-compose logs -f *имя_сервиса*
+```
+Или
+```bash
+docker logs -f *имя контейнера*
+```
+
+Остановить и удалить все контейнеры:
+```bash
+docker-compose down
+```
+
+Если запущен контейнер с тестовой базой:
+```bash
+docker-compose -f docker-compose.yml -f docker-compose-test.yml down
+```
 
 # Что есть сейчас
 
