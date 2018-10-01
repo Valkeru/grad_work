@@ -52,6 +52,22 @@ class PublicApiFactory
             throw new BadRequestHttpException('Request extraction failed');
         }
 
-        return $request->getContent();
+        if ($request->getContent() !== '') {
+            $content = json_decode($request->getContent(), true);
+        } else {
+            $content = [];
+        }
+
+        $attrubutes = [];
+        foreach ($request->attributes->all() as $key => $value) {
+            // Пропускаем внутренние атрибуты фреймворка
+            if (strpos($key, '_') === 0) {
+                continue;
+            }
+
+            $attrubutes[$key] = $value;
+        }
+
+        return json_encode(array_merge($content, $attrubutes), JSON_UNESCAPED_UNICODE);
     }
 }

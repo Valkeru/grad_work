@@ -67,3 +67,27 @@ services:
     arguments:
     - '@request_stack'
     - '\Valkeru\PublicApi\Security\PublicKeyRequest'
+
+  Valkeru\PublicApi\Domain\AddDomainRequest:
+    factory:
+    - '@App\Factory\PublicApiFactory'
+    - 'makePublicApiRequest'
+    arguments:
+    - '@request_stack'
+    - '\Valkeru\PublicApi\Domain\AddDomainRequest'
+
+  Valkeru\PublicApi\Domain\ListDomainsRequest:
+    factory:
+    - '@App\Factory\PublicApiFactory'
+    - 'makePublicApiRequest'
+    arguments:
+    - '@request_stack'
+    - 'Valkeru\PublicApi\Domain\ListDomainsRequest'
+
+  Valkeru\PublicApi\Domain\DomainInfoRequest:
+      factory:
+      - '@App\Factory\PublicApiFactory'
+      - 'makePublicApiRequest'
+      arguments:
+      - '@request_stack'
+      - 'Valkeru\PublicApi\Domain\DomainInfoRequest'

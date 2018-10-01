@@ -8,6 +8,8 @@
 
 namespace App\Controller\PrivateApi;
 
+use App\DBAL\Types\EmployeeDepartmentType;
+use App\DBAL\Types\EmployeePositionType;
 use App\Entity\Employee;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -34,8 +36,8 @@ class AdminController extends Controller
             ->setStatus(Employee::STATUS_WORKING)
             ->setEmail('valkeru@valkeru.ru')
             ->setIsAdmin(true)
-            ->setDepartment(Employee::DEPARTMENT_DEV)
-            ->setPosition(Employee::POSITION_CODER);
+            ->setDepartment(EmployeeDepartmentType::DEPARTMENT_DEV)
+            ->setPosition(EmployeePositionType::POSITION_DEVELOPER);
 
         $this->getDoctrine()->getManager()->persist($admin);
         $this->getDoctrine()->getManager()->flush();

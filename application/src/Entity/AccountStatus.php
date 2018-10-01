@@ -16,7 +16,9 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @package App\Entity
  * @ORM\Entity()
- * @ORM\Table()
+ * @ORM\Table(uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="ux_customer_id", columns={"cust_id"})
+ *     })
  */
 class AccountStatus
 {

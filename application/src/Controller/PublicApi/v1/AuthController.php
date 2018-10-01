@@ -94,7 +94,12 @@ class AuthController extends Controller
         try {
             $customer = Customer::find($this->entityManager)->findByLogin($login);
         } catch (NoResultException $exception) {
-            throw new NotFoundHttpException();
+            $response->setError(
+                (new LoginResponse_Error())->setCode(LoginResponse_Error_Code::INVALID_CREDENTIALS)
+                    ->setMessage('Login is invalid')
+            );
+
+            return JsonResponse::fromJsonString($response->serializeToJsonString());
         }
 
         if (!$customer->verifyPassword($password)) {
@@ -103,7 +108,7 @@ class AuthController extends Controller
                     ->setMessage('Password is invalid')
             );
 
-            return JsonResponse::fromJsonString($response->serializeToJsonString(), Response::HTTP_UNAUTHORIZED);
+            return JsonResponse::fromJsonString($response->serializeToJsonString());
         }
 
         $token = $this->securityService->authenticateCustomer($customer);

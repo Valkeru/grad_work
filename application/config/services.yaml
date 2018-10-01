@@ -82,6 +82,10 @@ services:
         - '@snc_redis.employee_token_blacklist'
         - '%app.redis.default_ttl%'
 
+    app.security_service:
+        class: App\Service\SecurityService
+        public: true
+
     gelf.validator:
         class: Gelf\MessageValidator
 

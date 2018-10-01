@@ -10,6 +10,7 @@ namespace App\Entity;
 
 use App\Entity\Base\BaseEntity;
 use App\Helpers\PasswordHelper;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Lcobucci\JWT\Token;
 use libphonenumber\PhoneNumber;
@@ -111,6 +112,19 @@ class Customer extends BaseEntity
      * @ORM\JoinColumn(name="server_id", referencedColumnName="id")
      */
     private $server;
+
+    /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Domain", mappedBy="customer")
+     */
+    private $domains;
+
+    /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="App\Entity\Site", mappedBy="customer")
+     */
+    private $sites;
 
     /**
      * Customer constructor.
@@ -305,5 +319,45 @@ class Customer extends BaseEntity
         if ($this->token === NULL) {
             $this->token = $token;
         }
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getDomains(): Collection
+    {
+        return $this->domains;
+    }
+
+    /**
+     * @param Collection $domains
+     *
+     * @return Customer
+     */
+    public function setDomains(Collection $domains): Customer
+    {
+        $this->domains = $domains;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getSites(): Collection
+    {
+        return $this->sites;
+    }
+
+    /**
+     * @param Collection $sites
+     *
+     * @return Customer
+     */
+    public function setSites(Collection $sites): Customer
+    {
+        $this->sites = $sites;
+
+        return $this;
     }
 }

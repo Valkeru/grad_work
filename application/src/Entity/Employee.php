@@ -12,6 +12,10 @@ use App\Entity\Base\BaseEntity;
 use App\Helpers\PasswordHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Fresh\DoctrineEnumBundle\Validator\Constraints as EnumAssert;
+use App\DBAL\Types\{
+    EmployeeDepartmentType, EmployeePositionType, EmployeeStatusType
+};
 
 /**
  * Class Worker
@@ -30,21 +34,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Employee extends BaseEntity
 {
-    public const STATUS_PROBATION = 'probation';
-    public const STATUS_WORKING   = 'working';
-    public const STATUS_FIRED     = 'fired';
-
-    public const POSITION_SUPPORT   = 'support';
-    public const POSITION_ADMIN     = 'admin';
-    public const POSITION_DEVELOPER = 'developer';
-    public const POSITION_MANAGER   = 'manager';
-    public const POSITION_DEVOPS    = 'devops';
-
-    public const DEPARTMENT_SUPPORT = 'support';
-    public const DEPARTMENT_ADMIN   = 'admin';
-    public const DEPARTMENT_DEV     = 'development';
-    public const DEPARTMENT_MANAGER = 'manager';
-
     /**
      * @var int
      *
@@ -94,21 +83,24 @@ class Employee extends BaseEntity
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=false, columnDefinition="ENUM('support', 'admin', 'development', 'manager', 'bill')", options={"default":"support"})
+     * @ORM\Column(type="employee_department", nullable=false, options={"default":"support"})
+     * @EnumAssert\Enum(entity="\App\DBAL\Types\EmployeeDepartmentType")
      */
-    private $department;
+    private $department = EmployeeDepartmentType::DEPARTMENT_SUPPORT;
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=false, columnDefinition="ENUM('support', 'admin', 'developer', 'manager', 'devops')", options={"default":"support"})
+     * @ORM\Column(type="employee_position", nullable=false, options={"default":"support"})
+     * @EnumAssert\Enum(entity="\App\DBAL\Types\EmployeePositionType")
      */
-    private $position;
+    private $position = EmployeePositionType::POSITION_SUPPORT;
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=false, columnDefinition="ENUM('probation', 'working', 'fired')")
+     * @ORM\Column(type="employee_status", nullable=false, options={"default": "probation"})
+     * @EnumAssert\Enum(entity="\App\DBAL\Types\EmployeeStatusType")
      */
-    private $status = self::STATUS_PROBATION;
+    private $status = EmployeeStatusType::STATUS_PROBATION;
 
     /**
      * @var bool

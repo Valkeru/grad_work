@@ -18,10 +18,23 @@ service DomainService {
             delete: "/v1/domain/{id}"
         };
     }
+
+    rpc listDomains (ListDomainsRequest) returns (ListDomainsResponse) {
+        option (google.api.http) = {
+            get: "/v1/domain/list"
+        };
+    }
+
+    rpc domainInfo (DomainInfoRequest) returns (DomainInfoResponse) {
+        option (google.api.http) = {
+            get: "/v1/domain/{id}"
+        };
+    }
 }
 
 message AddDomainRequest {
     string fqdn = 1;
+    uint32 site_id = 2;
 }
 
 message AddDomainResponse {
@@ -40,11 +53,12 @@ message AddDomainResponse {
 
         enum Code {
             _ = 0;
+            DOMAIN_ALREADY_EXISTS = 1;
         }
     }
 }
 message DeleteDomainRequest {
-    string fqdn = 1;
+    uint32 id = 1;
 }
 
 message DeleteDomainResponse {
@@ -54,6 +68,53 @@ message DeleteDomainResponse {
     }
 
     message Success {
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+        }
+    }
+}
+
+message ListDomainsRequest {
+}
+
+message ListDomainsResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        repeated structures.Domain domains = 1;
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+        }
+    }
+}
+
+message DomainInfoRequest {
+    uint32 id = 1;
+}
+
+message DomainInfoResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        structures.Domain domain = 1;
     }
 
     message Error {

@@ -8,9 +8,11 @@
 
 namespace App\Entity;
 
+use App\DBAL\Types\ServerTypeType;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Fresh\DoctrineEnumBundle\Validator\Constraints as EnumAssert;
 
 /**
  * Class Server
@@ -23,10 +25,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Server
 {
-    public const TYPE_HOSTING                    = 'hosting';
-    public const TYPE_SYSTEM                     = 'system';
-    public const TYPE_DEDICATED                  = 'dedicated';
-    public const TYPE_DEDICATED_WITH_MAINTENANCE = 'dedicated_with_maintenance';
     /**
      * @var int
      * @ORM\Column(type="integer", nullable=false, options={"unsigned": true})
@@ -71,9 +69,10 @@ class Server
 
     /**
      * @var string
-     * @ORM\Column(type="string", columnDefinition="ENUM('hosting', 'system', 'dedicated', 'dedicated_with_maintanance')")
+     * @ORM\Column(type="server_type", options={"default": "hosting"})
+     * @EnumAssert\Enum(entity="\App\DBAL\Types\ServerTypeType")
      */
-    private $type = self::TYPE_HOSTING;
+    private $type = ServerTypeType::TYPE_HOSTING;
 
     /**
      * @var bool

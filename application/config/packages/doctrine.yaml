@@ -7,27 +7,54 @@ parameters:
 
 doctrine:
     dbal:
-        # configure these for your database server
-        driver: '%env(DB_DRIVER)%'
-        server_version: '%env(DB_SERVER_VERSION)%'
-        charset: '%env(DB_CHARSET)%'
-        default_table_options:
-            charset: '%env(DB_CHARSET)%'
-            collate: '%env(DB_COLLATION)%'
-        mapping_types:
-            enum: string
+        default_connection: default
+        connections:
+            default:
+                # configure these for your database server
+                driver: '%env(DB_DRIVER)%'
+                server_version: '%env(DB_SERVER_VERSION)%'
+                charset: '%env(DB_CHARSET)%'
+                default_table_options:
+                    charset: '%env(DB_CHARSET)%'
+                    collate: '%env(DB_COLLATION)%'
+                #Урл из .env с переменными не переваривается в CLI, в итоге отваливаются действия с БД
+                url: 'mysql://%env(DB_USER)%:%env(MYSQL_ROOT_PASSWORD)%@%env(DB_HOST)%:%env(DB_PORT)%/%env(MYSQL_DATABASE)%'
+            testing:
+                # configure these for your database server
+                driver: '%env(DB_DRIVER)%'
+                server_version: '%env(DB_SERVER_VERSION)%'
+                charset: '%env(DB_CHARSET)%'
+                default_table_options:
+                    charset: '%env(DB_CHARSET)%'
+                    collate: '%env(DB_COLLATION)%'
+                url: 'mysql://%env(DB_USER)%:%env(MYSQL_ROOT_PASSWORD)%@%env(DB_HOST)%_test:%env(DB_PORT)%/%env(MYSQL_DATABASE)%'
         types:
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
-        #Урл из .env с переменными не переваривается в CLI, в итоге отваливаются действия с БД
-        url: 'mysql://%env(DB_USER)%:%env(MYSQL_ROOT_PASSWORD)%@%env(DB_HOST)%:%env(DB_PORT)%/%env(MYSQL_DATABASE)%'
+            employee_position: \App\DBAL\Types\EmployeePositionType
+            employee_status: \App\DBAL\Types\EmployeeStatusType
+            employee_department: \App\DBAL\Types\EmployeeDepartmentType
+            server_type: \App\DBAL\Types\ServerTypeType
     orm:
         auto_generate_proxy_classes: false
-        naming_strategy: doctrine.orm.naming_strategy.underscore
-        auto_mapping: true
-        mappings:
-            App:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+        entity_managers:
+            default:
+                connection: default
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                auto_mapping: true
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity'
+                        prefix: 'App\Entity'
+                        alias: App
+            testing:
+                connection: testing
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity'
+                        prefix: 'App\Entity'
+                        alias: App

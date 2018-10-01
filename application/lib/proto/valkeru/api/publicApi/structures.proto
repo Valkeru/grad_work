@@ -49,7 +49,7 @@ message Domain {
 message Site {
     uint32 id = 1;
     string path = 2;
-    repeated Domain domains = 3;
+    repeated string domains = 3;
 }
 
 message Mailbox {

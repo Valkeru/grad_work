@@ -8,14 +8,10 @@
 
 namespace App\EventSubscriber\Migration;
 
-use App\Event\migration\MigrationFinishedEvent;
-use App\Event\migration\MigrationStartedEvent;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Migrations\Event\MigrationsEventArgs;
 use Doctrine\DBAL\Migrations\Events;
-use Doctrine\DBAL\Migrations\Migration;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class MigrationEventSubscriber
