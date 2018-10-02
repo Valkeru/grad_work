@@ -21,7 +21,7 @@ use App\DBAL\Types\{
  * Class Worker
  *
  * @package App\Entity
- * @method \App\Repository\EmployeeRepository find(\Doctrine\ORM\EntityManager $entityManager)
+ * @method \App\Repository\EmployeeRepository getRepository(\Doctrine\ORM\EntityManager $entityManager)
  *
  * @ORM\Table(name="workers", indexes={
  *     @ORM\Index(name="idx_name", columns={"name"})

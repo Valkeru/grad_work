@@ -8,6 +8,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -29,7 +30,7 @@ class Domain
 {
     /**
      * @var int
-     * @ORM\Column(type="integer", nullable=false, options={"unsigned": true})
+     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned": true})
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
@@ -56,12 +57,18 @@ class Domain
     private $isBlocked = false;
 
     /**
-     * @var Site
+     * @var Site|null
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Site", inversedBy="domains")
      * @ORM\JoinColumn(name="site_id", referencedColumnName="id", nullable=true)
      */
     private $site;
+
+    /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="\App\Entity\Mailbox", mappedBy="domain", cascade={"remove"})
+     */
+    private $mailboxes;
 
     /**
      * @return int
@@ -129,5 +136,33 @@ class Domain
         $this->isBlocked = $isBlocked;
 
         return $this;
+    }
+
+    /**
+     * @return Site
+     */
+    public function getSite(): Site
+    {
+        return $this->site;
+    }
+
+    /**
+     * @param Site $site
+     *
+     * @return Domain
+     */
+    public function setSite(?Site $site): Domain
+    {
+        $this->site = $site;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMailboxes(): Collection
+    {
+        return $this->mailboxes;
     }
 }

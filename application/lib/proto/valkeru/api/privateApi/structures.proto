@@ -51,26 +51,6 @@ message Mailbox {
     uint32 domain_id = 4;
 }
 
-message CronTask {
-    Customer customer = 1;
-    uint32 id = 2;
-    repeated uint32 minutes = 3;
-    repeated uint32 hours = 4;
-    repeated uint32 days = 5;
-    repeated uint32 months = 6;
-    repeated uint32 weekdays = 7;
-    string command = 8;
-    bool enabled = 9;
-}
-
-message FtpAccount {
-    Customer customer = 1;
-    uint32 id = 2;
-    string suffix = 3;
-    string path = 4;
-    bool ssh_enabled = 5;
-}
-
 message MysqlDatabase {
     Customer customer = 1;
     uint32 id = 2;

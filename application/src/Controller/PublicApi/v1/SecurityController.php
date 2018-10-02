@@ -17,20 +17,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Valkeru\PublicApi\Security\BlacklistTokenRequest;
-use Valkeru\PublicApi\Security\ChangePasswordRequest;
-use Valkeru\PublicApi\Security\ChangePasswordResponse;
-use Valkeru\PublicApi\Security\ChangePasswordResponse_Error;
-use Valkeru\PublicApi\Security\ChangePasswordResponse_Error_Code;
-use Valkeru\PublicApi\Security\ChangePasswordResponse_Success;
-use Valkeru\PublicApi\Security\InvalidateAllTokensRequest;
-use Valkeru\PublicApi\Security\InvalidateAllTokensResponse;
-use Valkeru\PublicApi\Security\InvalidateAllTokensResponse_Success;
-use Valkeru\PublicApi\Security\PublicKeyRequest;
-use Valkeru\PublicApi\Security\PublicKeyResponse;
-use Valkeru\PublicApi\Security\PublicKeyResponse_Success;
-use Valkeru\PublicApi\Security\TokenInfoRequest;
-use Valkeru\PublicApi\Security\TokenInfoResponse;
+use Valkeru\PublicApi\Security\{
+    BlacklistTokenRequest, ChangePasswordRequest, ChangePasswordResponse, ChangePasswordResponse_Error,
+    ChangePasswordResponse_Error_Code, ChangePasswordResponse_Success, InvalidateAllTokensRequest,
+    InvalidateAllTokensResponse, InvalidateAllTokensResponse_Success, PublicKeyRequest, PublicKeyResponse,
+    PublicKeyResponse_Success, TokenInfoRequest, TokenInfoResponse,
+};
 
 /**
  * Class SecurityController

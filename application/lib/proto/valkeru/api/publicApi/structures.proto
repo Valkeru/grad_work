@@ -69,16 +69,9 @@ message CronTask {
     bool enabled = 8;
 }
 
-message FtpAccount {
-    uint32 id = 1;
-    string suffix = 2;
-    string path = 3;
-    bool ssh_enabled = 4;
-}
-
 message MysqlDatabase {
     uint32 id = 1;
     string suffix = 2;
     //Хосты, с которых разрешено подключение к базе
-    repeated string allowed_hosts = 3;
+    repeated string allowedHosts = 3;
 }

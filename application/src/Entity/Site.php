@@ -97,7 +97,9 @@ class Site
      */
     public function setCustomer(Customer $customer): Site
     {
-        $this->customer = $customer;
+        if ($this->customer === NULL) {
+            $this->customer = $customer;
+        }
 
         return $this;
     }

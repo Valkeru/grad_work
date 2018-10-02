@@ -1,93 +1,197 @@
 services:
-  _defaults:
-    autowire: true
-    public: false
-    autoconfigure: false
+    _defaults:
+        autowire: true
+        public: false
+        autoconfigure: false
 
-  Valkeru\PublicApi\Registration\RegistrationRequest:
-    factory:
-    - '@App\Factory\PublicApiFactory'
-    - 'makePublicApiRequest'
-    arguments:
-    - '@request_stack'
-    - '\Valkeru\PublicApi\Registration\RegistrationRequest'
+    Valkeru\PublicApi\Registration\RegistrationRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - '\Valkeru\PublicApi\Registration\RegistrationRequest'
 
-  Valkeru\PublicApi\Auth\LoginRequest:
-    factory:
-    - '@App\Factory\PublicApiFactory'
-    - 'makePublicApiRequest'
-    arguments:
-    - '@request_stack'
-    - '\Valkeru\PublicApi\Auth\LoginRequest'
+    Valkeru\PublicApi\Auth\LoginRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - '\Valkeru\PublicApi\Auth\LoginRequest'
 
-  Valkeru\PublicApi\Auth\LogoutRequest:
-    factory:
-    - '@App\Factory\PublicApiFactory'
-    - 'makePublicApiRequest'
-    arguments:
-    - '@request_stack'
-    - '\Valkeru\PublicApi\Auth\LogoutRequest'
+    Valkeru\PublicApi\Auth\LogoutRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - '\Valkeru\PublicApi\Auth\LogoutRequest'
 
-  Valkeru\PublicApi\Security\TokenInfoRequest:
-    factory:
-    - '@App\Factory\PublicApiFactory'
-    - 'makePublicApiRequest'
-    arguments:
-    - '@request_stack'
-    - '\Valkeru\PublicApi\Security\TokenInfoRequest'
+    Valkeru\PublicApi\Security\TokenInfoRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - '\Valkeru\PublicApi\Security\TokenInfoRequest'
 
-  Valkeru\PublicApi\Security\BlacklistTokenRequest:
-    factory:
-    - '@App\Factory\PublicApiFactory'
-    - 'makePublicApiRequest'
-    arguments:
-    - '@request_stack'
-    - '\Valkeru\PublicApi\Security\BlacklistTokenRequest'
+    Valkeru\PublicApi\Security\BlacklistTokenRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - '\Valkeru\PublicApi\Security\BlacklistTokenRequest'
 
-  Valkeru\PublicApi\Security\InvalidateAllTokensRequest:
-    factory:
-    - '@App\Factory\PublicApiFactory'
-    - 'makePublicApiRequest'
-    arguments:
-    - '@request_stack'
-    - '\Valkeru\PublicApi\Security\InvalidateAllTokensRequest'
+    Valkeru\PublicApi\Security\InvalidateAllTokensRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - '\Valkeru\PublicApi\Security\InvalidateAllTokensRequest'
 
-  Valkeru\PublicApi\Security\ChangePasswordRequest:
-    factory:
-    - '@App\Factory\PublicApiFactory'
-    - 'makePublicApiRequest'
-    arguments:
-    - '@request_stack'
-    - '\Valkeru\PublicApi\Security\ChangePasswordRequest'
+    Valkeru\PublicApi\Security\ChangePasswordRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - '\Valkeru\PublicApi\Security\ChangePasswordRequest'
 
-  Valkeru\PublicApi\Security\PublicKeyRequest:
-    factory:
-    - '@App\Factory\PublicApiFactory'
-    - 'makePublicApiRequest'
-    arguments:
-    - '@request_stack'
-    - '\Valkeru\PublicApi\Security\PublicKeyRequest'
+    Valkeru\PublicApi\Security\PublicKeyRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - '\Valkeru\PublicApi\Security\PublicKeyRequest'
 
-  Valkeru\PublicApi\Domain\AddDomainRequest:
-    factory:
-    - '@App\Factory\PublicApiFactory'
-    - 'makePublicApiRequest'
-    arguments:
-    - '@request_stack'
-    - '\Valkeru\PublicApi\Domain\AddDomainRequest'
+    Valkeru\PublicApi\Domain\AddDomainRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - '\Valkeru\PublicApi\Domain\AddDomainRequest'
 
-  Valkeru\PublicApi\Domain\ListDomainsRequest:
-    factory:
-    - '@App\Factory\PublicApiFactory'
-    - 'makePublicApiRequest'
-    arguments:
-    - '@request_stack'
-    - 'Valkeru\PublicApi\Domain\ListDomainsRequest'
+    Valkeru\PublicApi\Domain\ListDomainsRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Domain\ListDomainsRequest'
 
-  Valkeru\PublicApi\Domain\DomainInfoRequest:
-      factory:
-      - '@App\Factory\PublicApiFactory'
-      - 'makePublicApiRequest'
-      arguments:
-      - '@request_stack'
-      - 'Valkeru\PublicApi\Domain\DomainInfoRequest'
+    Valkeru\PublicApi\Domain\DomainInfoRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Domain\DomainInfoRequest'
+
+    Valkeru\PublicApi\Site\AddSiteRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Site\AddSiteRequest'
+
+    Valkeru\PublicApi\Site\SiteInfoRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Site\SiteInfoRequest'
+
+    Valkeru\PublicApi\Site\AttachDomainRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Site\AttachDomainRequest'
+
+    Valkeru\PublicApi\Site\DetachDomainRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Site\DetachDomainRequest'
+
+    Valkeru\PublicApi\Mysql\AddDatabaseRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Mysql\AddDatabaseRequest'
+
+    Valkeru\PublicApi\Mysql\DeleteDatabaseRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Mysql\DeleteDatabaseRequest'
+
+    Valkeru\PublicApi\Mysql\DatabaseInfoRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Mysql\DatabaseInfoRequest'
+
+    Valkeru\PublicApi\Mysql\AddRemoteAccessRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Mysql\AddRemoteAccessRequest'
+
+    Valkeru\PublicApi\Mysql\RemoveRemoteAccessRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Mysql\RemoveRemoteAccessRequest'
+
+    Valkeru\PublicApi\Mail\MailboxListRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Mail\MailboxListRequest'
+
+    Valkeru\PublicApi\Mail\MailboxInfoRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Mail\MailboxInfoRequest'
+
+    Valkeru\PublicApi\Mail\AddMailboxRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Mail\AddMailboxRequest'
+
+    Valkeru\PublicApi\Mail\DeleteMailboxRequest:
+        factory:
+        - '@App\Factory\PublicApiFactory'
+        - 'makePublicApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Mail\DeleteMailboxRequest'

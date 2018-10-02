@@ -20,18 +20,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Valkeru\PublicApi\Auth\{
-    LoginRequest,
-    LoginResponse,
-    LoginResponse_Error,
-    LoginResponse_Error_Code,
-    LoginResponse_Success,
-    LogoutRequest,
-    LogoutResponse,
-    LogoutResponse_Success,
+    LoginRequest, LoginResponse, LoginResponse_Error, LoginResponse_Error_Code,
+    LoginResponse_Success, LogoutResponse, LogoutResponse_Success,
 };
 
 /**
@@ -92,7 +84,7 @@ class AuthController extends Controller
         }
 
         try {
-            $customer = Customer::find($this->entityManager)->findByLogin($login);
+            $customer = Customer::getRepository($this->entityManager)->findByLogin($login);
         } catch (NoResultException $exception) {
             $response->setError(
                 (new LoginResponse_Error())->setCode(LoginResponse_Error_Code::INVALID_CREDENTIALS)
@@ -123,12 +115,11 @@ class AuthController extends Controller
      * @Route("/logout", methods={"GET"})
      * @Security("has_role('ROLE_CUSTOMER_BLOCKED')")
      *
-     * @param LogoutRequest $logoutRequest
-     * @param Request       $request
+     * @param Request $request
      *
      * @return JsonResponse
      */
-    public function actionLogout(LogoutRequest $logoutRequest, Request $request): JsonResponse
+    public function actionLogout(Request $request): JsonResponse
     {
         $tokenString = BearerHelper::extractTokenString($request);
         $customer = $this->getUser();

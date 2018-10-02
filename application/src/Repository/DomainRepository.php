@@ -22,6 +22,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  * @method Domain|NULL one()
  * @method Domain[] all()
  * @method self strict()
+ * @method self resetQueryBuilder()
  */
 class DomainRepository extends ServiceEntityRepository
 {

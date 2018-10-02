@@ -38,6 +38,8 @@ trait RepositoryHelper
             }
 
             throw new NotFoundHttpException();
+        } finally {
+            $this->resetQueryBuilder();
         }
     }
 
@@ -46,15 +48,26 @@ trait RepositoryHelper
      */
     public function all(): array
     {
-        return $this->qb->getQuery()->getResult();
+        $result = $this->qb->getQuery()->getResult();
+        $this->resetQueryBuilder();
+
+        return $result;
     }
 
     /**
      * @return $this
      */
-    public function strict()
+    public function strict(): self
     {
         $this->strict = true;
+
+        return $this;
+    }
+
+    public function resetQueryBuilder(): self
+    {
+        $alias    = $this->qb->getRootAlias();
+        $this->qb = $this->createQueryBuilder($alias);
 
         return $this;
     }

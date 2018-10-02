@@ -14,7 +14,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Lcobucci\JWT\Token;
 use libphonenumber\PhoneNumber;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Constraints as Assert;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
@@ -22,16 +21,18 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  * Class Customer
  *
  * @package App\Entity
- * @method static \App\Repository\CustomerRepository find(\Doctrine\ORM\EntityManager $entityManager)
+ * @method static \App\Repository\CustomerRepository getRepository(\Doctrine\ORM\EntityManager $entityManager)
  *
  * @ORM\Table(name="customers", uniqueConstraints={
  *          @ORM\UniqueConstraint(name="ux_customer_login", columns={"login"})
- *     })
+ *     }, indexes={
+ *          @ORM\Index(name="ix_customer_server", columns={"server_id"})
+ * }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
  */
 class Customer extends BaseEntity
 {
-    public const DEMO_LOGIN = 'demo';
 
     /**
      * @var int
@@ -127,6 +128,12 @@ class Customer extends BaseEntity
     private $sites;
 
     /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="Database", mappedBy="customer")
+     */
+    private $databases;
+
+    /**
      * Customer constructor.
      */
     public function __construct()
@@ -160,7 +167,7 @@ class Customer extends BaseEntity
      */
     public function setLogin(string $login): self
     {
-        $this->login = $login;
+        $this->login = strtolower($login);
 
         return $this;
     }
@@ -357,6 +364,26 @@ class Customer extends BaseEntity
     public function setSites(Collection $sites): Customer
     {
         $this->sites = $sites;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getDatabases(): Collection
+    {
+        return $this->databases;
+    }
+
+    /**
+     * @param Collection $databases
+     *
+     * @return Customer
+     */
+    public function setDatabases(Collection $databases): Customer
+    {
+        $this->databases = $databases;
 
         return $this;
     }

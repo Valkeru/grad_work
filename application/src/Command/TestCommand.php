@@ -2,25 +2,17 @@
 
 namespace App\Command;
 
-use App\Entity\AccountStatus;
 use App\Entity\Customer;
-use App\Entity\Server;
-use App\Repository\ServerRepository;
-use Predis\Client;
-use Ramsey\Uuid\Uuid;
-use Symfony\Component\Cache\Simple\RedisCache;
+use App\Entity\Database;
+use App\Entity\Domain;
+use App\Entity\Mailbox;
+use App\Repository\DomainRepository;
+use App\Repository\MailboxRepository;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Exception\ValidatorException;
-use Symfony\Component\Validator\Validator\TraceableValidator;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class TestCommand extends Command
 {
@@ -41,12 +33,19 @@ class TestCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $em = $this->container->get('doctrine.orm.entity_manager');
-        /** @var Server $srv */
-        $srv = $em->getRepository(Server::class)->find(1);
+        $manager = $this->container->get('doctrine.orm.default_entity_manager');
 
-        $c = $srv->getCustomers()->toArray();
+        /** @var DomainRepository $dRepo */
+        $dRepo = $manager->getRepository(Domain::class);
+        /** @var MailboxRepository $mRepo */
+        $mRepo = $manager->getRepository(Mailbox::class);
 
-        return;
+        $domain = $dRepo->find(1);
+        $domain2 = $dRepo->find(2);
+
+        $m1 = $mRepo->findByDomain($domain)->all();
+        $m2 = $mRepo->findById(5)->one();
+
+        usleep(0);
     }
 }

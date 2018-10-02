@@ -35,7 +35,10 @@ use Valkeru\PublicApi\Domain\{
  * @method Customer getUser()
  *
  * @package App\Controller\PublicApi\v1
- * @Security("has_role('ROLE_CUSTOMER')")
+ *
+ * @Security("request.server.get('PUBLIC_ENABLED') === '1'", message="Under maintenance. Please try later")
+ * @Security("has_role('ROLE_CUSTOMER')", message="Account is blocked, access denied")
+ *
  * @Route("/domain")
  */
 class DomainController extends Controller
@@ -57,7 +60,7 @@ class DomainController extends Controller
     }
 
     /**
-     * @Route("/add", methods={"PUT"})
+     * @Route(methods={"PUT"})
      * @param AddDomainRequest $request
      *
      * @return JsonResponse

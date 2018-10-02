@@ -46,7 +46,7 @@ class PublicApiFactory
      * @return string
      * @throws BadRequestHttpException
      */
-    private static function extractRequestContent(?Request $request): string
+    private static function extractRequestContent(?Request $request): ?string
     {
         if ($request === NULL) {
             throw new BadRequestHttpException('Request extraction failed');
@@ -68,6 +68,8 @@ class PublicApiFactory
             $attrubutes[$key] = $value;
         }
 
-        return json_encode(array_merge($content, $attrubutes), JSON_UNESCAPED_UNICODE);
+        $content = array_merge($content, $attrubutes);
+
+        return empty($content) ? NULL : json_encode($content, JSON_UNESCAPED_UNICODE);
     }
 }

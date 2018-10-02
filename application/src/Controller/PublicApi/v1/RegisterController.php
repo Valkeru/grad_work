@@ -24,14 +24,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Valkeru\PublicApi\Registration\RegistrationRequest;
-use Valkeru\PublicApi\Registration\RegistrationResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Validator\Exception\ValidatorException;
-use Valkeru\PublicApi\Registration\RegistrationResponse_Error;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Valkeru\PublicApi\Registration\RegistrationResponse_Success;
-use Valkeru\PublicApi\Registration\RegistrationResponse_Error_Code;
+use Valkeru\PublicApi\Registration\{
+    RegistrationResponse, RegistrationResponse_Error, RegistrationRequest,
+    RegistrationResponse_Success, RegistrationResponse_Error_Code,
+};
 
 /**
  * Class RegistrationController

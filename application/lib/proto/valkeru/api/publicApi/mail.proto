@@ -21,7 +21,7 @@ service MailService {
 
     rpc addMailbox (AddMailboxRequest) returns (AddMailboxResponse) {
         option (google.api.http) = {
-            put: "/v1/mail/new"
+            put: "/v1/mail"
             body: "*"
         };
     }
@@ -29,13 +29,6 @@ service MailService {
     rpc deleteMailbox (DeleteMailboxRequest) returns (DeleteMailboxResponse) {
         option (google.api.http) = {
             delete: "/v1/mail/{id}"
-            body: "*"
-        };
-    }
-
-    rpc changeMailboxPassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
-        option (google.api.http) = {
-            post: "/v1/mail/{id}/change-password"
             body: "*"
         };
     }
@@ -91,8 +84,7 @@ message MailboxInfoResponse {
 
 message AddMailboxRequest {
     string name = 1;
-    string password = 2;
-    uint32 domain_id = 3;
+    uint32 domain_id = 2;
 }
 
 message AddMailboxResponse {
@@ -112,6 +104,7 @@ message AddMailboxResponse {
         enum Code {
             _ = 0;
             DOMAIN_NOT_FOUND = 1;
+            MAILBOX_ALREADY_EXISTS = 2;
         }
     }
 }

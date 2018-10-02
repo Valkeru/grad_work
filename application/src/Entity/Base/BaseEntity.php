@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityRepository;
 
 abstract class BaseEntity
 {
-    public static function find(EntityManager $em): EntityRepository
+    public static function getRepository(EntityManager $em): EntityRepository
     {
         return $em->getRepository(static::class);
     }

@@ -41,11 +41,11 @@ class DomainControllerTest extends WebTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->client = static::createClient([], [
+        $this->client = self::createClient([], [
             'HTTP_HOST' => 'public.api.local'
         ]);
 
-        $container = static::bootKernel()->getContainer();
+        $container = self::bootKernel()->getContainer();
         $key = new Key('file://' . $container->getParameter('app.public.private_key'));
 
         $now        = new \DateTime();
@@ -59,9 +59,6 @@ class DomainControllerTest extends WebTestCase
         $this->token = $builder->sign(new Sha256(), $key)->getToken();
     }
 
-    /**
-     *
-     */
     public function testActionList()
     {
         $this->client->request(Request::METHOD_GET, '/v1');

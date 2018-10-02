@@ -20,7 +20,7 @@ service MysqlService {
 
     rpc addDatabase (AddDatabaseRequest) returns (AddDatabaseResponse) {
         option (google.api.http) = {
-            put: "/v1/mysql/new"
+            put: "/v1/mysql"
             body: "*"
         };
     }
@@ -41,13 +41,6 @@ service MysqlService {
     rpc removeRemoteAccess (RemoveRemoteAccessRequest) returns (RemoveRemoteAccessResponse) {
         option (google.api.http) = {
             delete: "/v1/mysql/access"
-            body: "*"
-        };
-    }
-
-    rpc changeAccessPassword (structures.DummyMessage) returns (structures.DummyMessage) {
-        option (google.api.http) = {
-            post: "/v1/mysql/password"
             body: "*"
         };
     }
@@ -102,7 +95,6 @@ message DatabaseInfoResponse {
 
 message AddDatabaseRequest {
     string suffix = 1;
-    string password = 2;
 }
 
 message AddDatabaseResponse {
@@ -121,6 +113,7 @@ message AddDatabaseResponse {
 
         enum Code {
             _ = 0;
+            DATABASE_EXISTS = 1;
         }
     }
 }
@@ -176,33 +169,6 @@ message RemoveRemoteAccessRequest {
 }
 
 message RemoveRemoteAccessResponse {
-    oneof result {
-        Success success = 1;
-        Error error = 2;
-    }
-
-    message Success {
-        structures.MysqlDatabase database = 1;
-    }
-
-    message Error {
-        Code code = 1;
-        string message = 2;
-
-        enum Code {
-            _ = 0;
-            REMOTE_ACCESS_NOT_FOUND = 1;
-        }
-    }
-}
-
-message ChangePasswordRequest {
-    uint32 database_id = 1;
-    string host = 2;
-    string password = 3;
-}
-
-message ChangePasswordResponse {
     oneof result {
         Success success = 1;
         Error error = 2;
