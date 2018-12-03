@@ -25,7 +25,26 @@ message LoginRequest {
 }
 
 message LoginResponse {
-    string token = 1;
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        string token = 1;
+    }
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            _ = 0;
+            INVALID_LOGIN = 1;
+            INVALID_PASSWORD = 2;
+            EMPTY_CREDENTIALS = 3;
+        }
+    }
 }
 
 message LogoutRequest {

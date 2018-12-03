@@ -171,7 +171,7 @@ class RegisterController extends Controller
                 $registrationError->setCode(RegistrationResponse_Error_Code::PASSWORD_IS_BLANK)
                     ->setMessage('Password is not set')
             );
-        } elseif (!SecurityService::validateCustomerPassword($password)) {
+        } elseif (!SecurityService::validatePassword($password)) {
             $response->setError(
                 $registrationError->setCode(RegistrationResponse_Error_Code::INVALID_PASSWORD)
                     ->setMessage('Password should has length at least 8 symbols and consist of symbols A-z, 0-9, {, }, /, |, \, _, (, ), &, %, #, ^, -, +, =,')

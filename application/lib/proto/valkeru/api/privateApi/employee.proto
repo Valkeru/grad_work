@@ -45,8 +45,9 @@ message CreateEmployeeRequest {
     string password = 2;
     string emailLogin = 3;
     string name = 4;
-    string department = 5;
-    string position = 6;
+    string surname = 5;
+    string department = 6;
+    string position = 7;
 }
 
 message CreateEmployeeResponse {

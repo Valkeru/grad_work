@@ -12,7 +12,6 @@ use App\Entity\Employee;
 use App\Entity\Server;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use App\DBAL\Types\{
     EmployeeDepartmentType, EmployeePositionType, EmployeeStatusType, ServerTypeType
 };
@@ -27,30 +26,11 @@ class InitialDatabaseFixtures extends Fixture
     private const DEFAULT_ROOT_PASSWORD = '2mx66ALa0DgoPOQs';
 
     /**
-     * @var \Doctrine\ORM\EntityManager|object
-     */
-    private $needleManager;
-
-    /**
-     * InitialDatabaseFixtures constructor.
-     *
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->needleManager = $container->get('doctrine.orm.default_entity_manager');
-    }
-
-    /**
      * @param ObjectManager $manager
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        if ($this->needleManager !== $manager) {
-            return;
-        }
-
-        // Если стартовые данные в базу уже загружены - выходим нафиг
+        // Если стартовые данные в базу уже загружены - выходим
         if ($manager->getRepository(Employee::class)->find(1) !== NULL) {
             return;
         }

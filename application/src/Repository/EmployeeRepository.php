@@ -9,12 +9,25 @@
 namespace App\Repository;
 
 use App\Entity\Employee;
+use App\Helpers\RepositoryHelper;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
+/**
+ * Class EmployeeRepository
+ *
+ * @package App\Repository
+ *
+ * @method self strict()
+ * @method self resetQueryBuilder()
+ * @method Employee one()
+ * @method Employee[] all()
+ */
 class EmployeeRepository extends ServiceEntityRepository
 {
+    use RepositoryHelper;
+
     /**
      * @var QueryBuilder
      */
@@ -27,18 +40,30 @@ class EmployeeRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function findById(int $id): self
+    {
+        $this->qb
+            ->andWhere('w.id = :id')
+            ->setParameter('id', $id);
+
+        return $this;
+    }
+
+    /**
      * @param string $login
      *
-     * @return Employee
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @return EmployeeRepository
      */
-    public function findByLogin(string $login): Employee
+    public function findByLogin(string $login): self
     {
-        return $this->qb
+        $this->qb
             ->andWhere('w.login = :login')
-            ->setParameter('login', $login)
-            ->getQuery()
-            ->getSingleResult();
+            ->setParameter('login', $login);
+
+        return $this;
     }
 }

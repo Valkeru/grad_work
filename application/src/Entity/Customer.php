@@ -8,7 +8,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Base\BaseEntity;
 use App\Helpers\PasswordHelper;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,7 +20,6 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  * Class Customer
  *
  * @package App\Entity
- * @method static \App\Repository\CustomerRepository getRepository(\Doctrine\ORM\EntityManager $entityManager)
  *
  * @ORM\Table(name="customers", uniqueConstraints={
  *          @ORM\UniqueConstraint(name="ux_customer_login", columns={"login"})
@@ -31,7 +29,7 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  * )
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
  */
-class Customer extends BaseEntity
+class Customer
 {
 
     /**

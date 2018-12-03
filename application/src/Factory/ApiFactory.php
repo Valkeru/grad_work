@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class PublicApiFactory
+class ApiFactory
 {
     /**
      * @param RequestStack $stack
@@ -23,7 +23,7 @@ class PublicApiFactory
      * @return Message
      * @throws ProtobufException
      */
-    public static function makePublicApiRequest(RequestStack $stack, string $class): Message
+    public static function makeApiRequest(RequestStack $stack, string $class): Message
     {
         /** @var Message $request */
         $request = new $class();

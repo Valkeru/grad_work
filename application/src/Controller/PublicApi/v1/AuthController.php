@@ -20,6 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Valkeru\PublicApi\Auth\{
     LoginRequest, LoginResponse, LoginResponse_Error, LoginResponse_Error_Code,
@@ -84,8 +85,9 @@ class AuthController extends Controller
         }
 
         try {
-            $customer = Customer::getRepository($this->entityManager)->findByLogin($login);
-        } catch (NoResultException $exception) {
+            /** @var Customer $customer */
+            $customer = $this->entityManager->getRepository(Customer::class)->findByLogin($login)->strict()->one();
+        } catch (NotFoundHttpException $exception) {
             $response->setError(
                 (new LoginResponse_Error())->setCode(LoginResponse_Error_Code::INVALID_CREDENTIALS)
                     ->setMessage('Login is invalid')

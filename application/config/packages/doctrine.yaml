@@ -48,13 +48,3 @@ doctrine:
                         dir: '%kernel.project_dir%/src/Entity'
                         prefix: 'App\Entity'
                         alias: App
-            testing:
-                connection: testing
-                naming_strategy: doctrine.orm.naming_strategy.underscore
-                mappings:
-                    App:
-                        is_bundle: false
-                        type: annotation
-                        dir: '%kernel.project_dir%/src/Entity'
-                        prefix: 'App\Entity'
-                        alias: App

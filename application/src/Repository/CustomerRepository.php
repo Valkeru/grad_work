@@ -9,11 +9,24 @@
 namespace App\Repository;
 
 use App\Entity\Customer;
+use App\Helpers\RepositoryHelper;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
+/**
+ * Class CustomerRepository
+ *
+ * @package App\Repository
+ *
+ * @method $this strict()
+ * @method $this resetQueryBuilder()
+ * @method Customer one()
+ * @method Customer[] all()
+ */
 class CustomerRepository extends ServiceEntityRepository
 {
+    use RepositoryHelper;
+
     /**
      * @var \Doctrine\ORM\QueryBuilder
      */
@@ -28,16 +41,14 @@ class CustomerRepository extends ServiceEntityRepository
     /**
      * @param string $login
      *
-     * @return Customer
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @return CustomerRepository
      */
-    public function findByLogin(string $login): Customer
+    public function findByLogin(string $login): CustomerRepository
     {
-        return $this->qb
+        $this->qb
             ->andWhere('c.login = :login')
-            ->setParameter('login', $login)
-            ->getQuery()
-            ->getSingleResult();
+            ->setParameter('login', $login);
+
+        return $this;
     }
 }

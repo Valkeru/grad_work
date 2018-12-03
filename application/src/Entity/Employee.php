@@ -8,7 +8,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Base\BaseEntity;
 use App\Helpers\PasswordHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -21,7 +20,6 @@ use App\DBAL\Types\{
  * Class Worker
  *
  * @package App\Entity
- * @method \App\Repository\EmployeeRepository getRepository(\Doctrine\ORM\EntityManager $entityManager)
  *
  * @ORM\Table(name="workers", indexes={
  *     @ORM\Index(name="idx_name", columns={"name"})
@@ -32,7 +30,7 @@ use App\DBAL\Types\{
  *     )
  * @ORM\Entity(repositoryClass="App\Repository\EmployeeRepository")
  */
-class Employee extends BaseEntity
+class Employee
 {
     /**
      * @var int
@@ -279,6 +277,16 @@ class Employee extends BaseEntity
         }
 
         return ['ROLE_EMPLOYEE'];
+    }
+
+    /**
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function verifyPassword(string $password): bool
+    {
+        return password_verify($password, $this->password);
     }
 
     /**

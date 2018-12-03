@@ -1,9 +1,0 @@
-version: '3'
-
-services:
-    mysql_test:
-        ports:
-        - 33061:3306
-        image: mysql:5.7
-        env_file:
-        - ../application/.mysql.env

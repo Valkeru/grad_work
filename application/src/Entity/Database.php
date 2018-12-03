@@ -8,7 +8,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Base\BaseEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,7 +16,6 @@ use Doctrine\ORM\Mapping as ORM;
  * Class Database
  *
  * @package App\Entity
- * @method static \App\Repository\DatabaseRepository getRepository(\Doctrine\ORM\EntityManager $entityManager)
  *
  * @ORM\Entity(repositoryClass="App\Repository\DatabaseRepository")
  * @ORM\Table(name="`databases`", indexes={
@@ -28,7 +26,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      }
  * )
  */
-class Database extends BaseEntity
+class Database
 {
     /**
      * @var int

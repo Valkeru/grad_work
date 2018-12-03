@@ -44,12 +44,17 @@ class SecurityService
     /**
      * @var RedisCache
      */
-    private $emoloyeeTokenBlacklistCache;
+    private $employeeTokenBlacklistCache;
 
     /**
      * @var Key
      */
-    private $privateKeyFile;
+    private $publicApiKeyFile;
+
+    /**
+     * @var Key
+     */
+    private $privateApiKeyFile;
 
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -69,11 +74,12 @@ class SecurityService
      */
     public function __construct(ContainerInterface $container, LoggerInterface $logger)
     {
-        $this->privateKeyFile              = new Key('file://' . $container->getParameter('app.public.private_key'));
+        $this->publicApiKeyFile            = new Key('file://' . $container->getParameter('app.public.private_key'));
+        $this->privateApiKeyFile           = new Key('file://' . $container->getParameter('app.private.private_key'));
         $this->entityManager               = $container->get('doctrine.orm.entity_manager');
         $this->logger                      = $logger;
         $this->customerTokenBlacklistCache = $container->get('app.cache.customer_token_blacklist');
-        $this->emoloyeeTokenBlacklistCache = $container->get('app.cache.employee_token_blacklist');
+        $this->employeeTokenBlacklistCache = $container->get('app.cache.employee_token_blacklist');
     }
 
     /**
@@ -85,8 +91,8 @@ class SecurityService
      */
     public function authenticateCustomer(Customer $customer, Employee $employee = NULL): Token
     {
-        $now        = new \DateTime();
-        $builder    = (new Builder())
+        $now     = new \DateTime();
+        $builder = (new Builder())
             ->setIssuedAt($now->getTimestamp())
             ->set('userId', $customer->getId())
             ->set('userName', $customer->getLogin())
@@ -99,7 +105,26 @@ class SecurityService
             $builder->setExpiration($now->add(new \DateInterval('P1W'))->getTimestamp());
         }
 
-        return $builder->sign(new Sha256(), $this->privateKeyFile)->getToken();
+        return $builder->sign(new Sha256(), $this->publicApiKeyFile)->getToken();
+    }
+
+    /**
+     * @param Employee $employee
+     *
+     * @return Token
+     * @throws \Exception
+     */
+    public function authenticateEmployee(Employee $employee): Token
+    {
+        $now     = new \DateTime();
+        $builder = (new Builder())
+            ->setIssuedAt($now->getTimestamp())
+            ->set('userId', $employee->getId())
+            ->set('employeeLogin', $employee->getLogin())
+            ->set('uuid', (string)Uuid::uuid4())
+            ->setExpiration($now->add(new \DateInterval('P1W'))->getTimestamp());
+
+        return $builder->sign(new Sha256(), $this->privateApiKeyFile)->getToken();
     }
 
     /**
@@ -122,6 +147,27 @@ class SecurityService
         $blacklist        = $this->customerTokenBlacklistCache->get((string)$customer->getId(), []);
         $blacklist[$uuid] = (new \DateTime())->add(new \DateInterval('P1W'));
         $this->customerTokenBlacklistCache->set((string)$customer->getId(), $blacklist);
+    }
+
+    /**
+     * @param Employee $employee
+     * @param string   $tokenString
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function blacklistEmployeeToken(Employee $employee, string $tokenString): void
+    {
+        if (!Uuid::isValid($tokenString)) {
+            $token = (new Parser())->parse($tokenString);
+            $uuid  = $token->getClaim('uuid');
+        } else {
+            $uuid = $tokenString;
+        }
+
+        /** @var string[] $blacklist */
+        $blacklist        = $this->employeeTokenBlacklistCache->get((string)$employee->getId(), []);
+        $blacklist[$uuid] = (new \DateTime())->add(new \DateInterval('P1W'));
+        $this->employeeTokenBlacklistCache->set((string)$employee->getId(), $blacklist);
     }
 
     /**
@@ -161,7 +207,7 @@ class SecurityService
             ];
         }
 
-        if (!self::validateCustomerPassword($newPassword)) {
+        if (!self::validatePassword($newPassword)) {
             return [
                 'code'    => self::INVALID_NEW_PASSWORD,
                 'message' => 'New password should has length at least 8 symbols and consist of symbols A-z, 0-9, {, }, /, |, \, _, (, ), &, %, #, ^, -, +, ='
@@ -193,7 +239,7 @@ class SecurityService
         }
     }
 
-    public static function validateCustomerPassword(string $password): bool
+    public static function validatePassword(string $password): bool
     {
         return \preg_match(sprintf('#[%s]{8,}#', self::PASSWORD_REGEX), $password);
     }

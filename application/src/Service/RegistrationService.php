@@ -9,8 +9,10 @@
 namespace App\Service;
 
 use App\Entity\Customer;
+use App\Entity\Employee;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use libphonenumber\PhoneNumberUtil;
+use Valkeru\PrivateApi\Employee\CreateEmployeeRequest;
 use Valkeru\PublicApi\Registration\RegistrationRequest;
 use Doctrine\ORM\{
     ORMException, EntityManager, EntityManagerInterface
@@ -33,15 +35,26 @@ class RegistrationService
      */
     private $serverService;
 
-    public function __construct(EntityManagerInterface $entityManager, SecurityService $authenticationService, ServerService $serverService)
+    /**
+     * @var string
+     */
+    private $emailDomain;
+
+    public function __construct(EntityManagerInterface $entityManager,
+                                SecurityService $authenticationService,
+                                ServerService $serverService,
+                                string $emailDomain)
     {
         $this->entityManager         = $entityManager;
         $this->authenticationService = $authenticationService;
-        $this->serverService = $serverService;
+        $this->serverService         = $serverService;
+        $this->emailDomain           = $emailDomain;
     }
 
     /**
      * @param RegistrationRequest $request
+     *
+     * @param bool                $isInternalRegistration
      *
      * @return array
      * @throws ORMException
@@ -49,7 +62,7 @@ class RegistrationService
      * @throws \libphonenumber\NumberParseException
      * @throws \Exception
      */
-    public function registerCustomer(RegistrationRequest $request): array
+    public function registerCustomer(RegistrationRequest $request, bool $isInternalRegistration = false): array
     {
         $customer = (new Customer())
             ->setName(sprintf('%s %s', $request->getName(), $request->getSurname()))
@@ -67,16 +80,48 @@ class RegistrationService
             $this->entityManager->commit();
             $this->entityManager->refresh($customer);
 
-            $token = $this->authenticationService->authenticateCustomer($customer);
+            if (!$isInternalRegistration) {
+                $token = $this->authenticationService->authenticateCustomer($customer);
+            } else {
+                $token = NULL;
+            }
 
             return [$customer, $token];
         } catch (UniqueConstraintViolationException $uniqueConstraintViolationException) {
             $this->entityManager->rollback();
             throw $uniqueConstraintViolationException;
-        }
-        catch (ORMException $e) {
+        } catch (ORMException $e) {
             $this->entityManager->rollback();
             throw $e;
         }
+    }
+
+    /**
+     * @param CreateEmployeeRequest $request
+     *
+     * @return Employee
+     * @throws ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function registerEmployee(CreateEmployeeRequest $request): Employee
+    {
+        $employee = (new Employee())
+            ->setName("{$request->getName()} {$request->getSurname()}")
+            ->setLogin($request->getLogin())
+            ->setPassword($request->getPassword())
+            ->setDepartment($request->getDepartment())
+            ->setPosition($request->getPosition());
+
+        if (($emailLogin = $request->getEmailLogin()) === '') {
+            $employee->setEmail("{$request->getLogin()}@{$this->emailDomain}");
+        } else {
+            $employee->setEmail("{$emailLogin}@{$this->emailDomain}");
+        }
+
+        $this->entityManager->persist($employee);
+        $this->entityManager->flush();
+        $this->entityManager->refresh($employee);
+
+        return $employee;
     }
 }

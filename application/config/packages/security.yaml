@@ -28,8 +28,9 @@ security:
             anonymous: true
         open_routes_internal:
             host: '%app.private_host%'
-            pattern: ^/(login|logout)
-            security: false
+            pattern: ^/auth/login$
+            security: true
+            anonymous: true
         public:
             host: '%app.public_host%'
             pattern: ^/v\d/

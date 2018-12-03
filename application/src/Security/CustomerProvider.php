@@ -11,7 +11,7 @@ namespace App\Security;
 use App\Entity\Customer;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -34,8 +34,8 @@ class CustomerProvider implements UserProviderInterface
     public function loadUserByUsername($username)
     {
         try {
-            return $this->repository->findByLogin($username);
-        } catch (NoResultException | NonUniqueResultException $e) {
+            return $this->repository->findByLogin($username)->strict()->one();
+        } catch (NotFoundHttpException | NonUniqueResultException $e) {
             throw new UsernameNotFoundException('User not found');
         }
     }

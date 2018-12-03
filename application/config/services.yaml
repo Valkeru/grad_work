@@ -4,6 +4,7 @@ parameters:
     locale: 'en'
     app.public_host: '%env(PUBLIC_HOST)%'
     app.private_host: '%env(PRIVATE_HOST)%'
+    app.email_domain: '%env(INTERNAL_EMAIL_DOMAIN)%'
     app.public.public_key: '%kernel.project_dir%/keys/publicApi/public.key'
     app.public.private_key: '%kernel.project_dir%/keys/publicApi/private.key'
     app.private.public_key: '%kernel.project_dir%/keys/privateApi/public.key'
@@ -85,6 +86,13 @@ services:
     app.security_service:
         class: App\Service\SecurityService
         public: true
+
+    App\Service\RegistrationService:
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@App\Service\SecurityService'
+            - '@App\Service\ServerService'
+            - '%app.email_domain%'
 
     gelf.validator:
         class: Gelf\MessageValidator
