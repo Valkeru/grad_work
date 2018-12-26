@@ -90,7 +90,8 @@ class RegisterController extends Controller
              */
             [$customer, $token] = $this->registrationService->registerCustomer($request);
 
-            $registrationSuccess = (new RegistrationResponse_Success())->setCustomer(CustomerMapper::mapCustomer($customer))
+            $registrationSuccess = (new RegistrationResponse_Success())
+                ->setCustomer(CustomerMapper::mapCustomer($customer))
                 ->setToken((string)$token);
 
             $event = new CustomerRegistrationFinishedEvent($customer);

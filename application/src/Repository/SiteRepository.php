@@ -69,4 +69,17 @@ class SiteRepository extends ServiceEntityRepository
 
         return $this;
     }
+
+    /**
+     * @param string $path
+     *
+     * @return $this
+     */
+    public function findByPath(string $path): self
+    {
+        $this->qb->andWhere('s.path = :path')
+            ->setParameter('path', $path);
+
+        return $this;
+    }
 }

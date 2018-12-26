@@ -4,6 +4,10 @@ services:
   webapp:
     container_name: webapp
     build: .
+    depends_on:
+      - mysql
+      - graylog
+      - redis
     volumes:
       - ../application:/var/www
       - ./xdebug.ini:/etc/php/7.2/mods-available/xdebug.ini
@@ -17,6 +21,8 @@ services:
   nginx:
     image: nginx:latest
     container_name: nginx
+    depends_on:
+      - webapp
     ports:
       - 8000:80
     volumes:

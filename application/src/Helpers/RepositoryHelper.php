@@ -26,12 +26,11 @@ trait RepositoryHelper
     /**
      * @return object|NULL
      * @throws NotFoundHttpException
-     * @throws NonUniqueResultException
      */
     public function one(): ?object
     {
         try {
-            return $this->qb->getQuery()->getSingleResult();
+            return $this->qb->getQuery()->getResult()[0];
         } catch (NoResultException $exception) {
             if (!$this->strict) {
                 return NULL;

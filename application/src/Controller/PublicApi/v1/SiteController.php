@@ -19,13 +19,25 @@ use Doctrine\ORM\NonUniqueResultException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Valkeru\PublicApi\Site\{
-    AddSiteRequest, AddSiteResponse, AddSiteResponse_Success, AttachDomainRequest, AttachDomainResponse,
-    AttachDomainResponse_Success, DeleteSiteResponse, DetachDomainRequest, DetachDomainResponse,
-    DetachDomainResponse_Success, SiteInfoRequest, SiteInfoResponse, SiteInfoResponse_Success, SiteListResponse,
-    SiteListResponse_Success
-};
+use Valkeru\PublicApi\Site\{AddSiteRequest,
+    AddSiteResponse,
+    AddSiteResponse_Error,
+    AddSiteResponse_Error_Code,
+    AddSiteResponse_Success,
+    AttachDomainRequest,
+    AttachDomainResponse,
+    AttachDomainResponse_Success,
+    DeleteSiteResponse,
+    DetachDomainRequest,
+    DetachDomainResponse,
+    DetachDomainResponse_Success,
+    SiteInfoRequest,
+    SiteInfoResponse,
+    SiteInfoResponse_Success,
+    SiteListResponse,
+    SiteListResponse_Success};
 
 /**
  * Class SiteController
@@ -129,11 +141,18 @@ class SiteController extends Controller
     {
         $response = new AddSiteResponse();
 
-        $site = $this->siteService->createSite($this->getUser(), $request->getPath());
-
-        $response->setSuccess(
-            (new AddSiteResponse_Success)->setSite(SiteMapper::mapSite($site))
-        );
+        try {
+            $site = $this->siteService->createSite($this->getUser(), $request->getPath());
+            $response->setSuccess(
+                (new AddSiteResponse_Success)->setSite(SiteMapper::mapSite($site))
+            );
+        } catch (BadRequestHttpException $exception) {
+            $response->setError(
+                (new AddSiteResponse_Error())
+                ->setCode(AddSiteResponse_Error_Code::SITE_EXISTS)
+                ->setMessage($exception->getMessage())
+            );
+        }
 
         return JsonResponse::fromJsonString($response->serializeToJsonString());
     }
@@ -153,6 +172,7 @@ class SiteController extends Controller
     /**
      * @Route("/{id}/attach-domain", requirements={"id": "\d+"}, methods={"POST"})
      * @return JsonResponse
+     * @throws NonUniqueResultException
      */
     public function actionAttachDomain(AttachDomainRequest $request): JsonResponse
     {

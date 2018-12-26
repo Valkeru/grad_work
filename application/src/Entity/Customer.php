@@ -385,4 +385,9 @@ class Customer
 
         return $this;
     }
+
+    public function getHomeDir(): string
+    {
+        return sprintf('/home/%s/%s', $this->login[0], $this->login);
+    }
 }
