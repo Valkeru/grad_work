@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 27.05.18
- * Time: 23:28
- */
 
 namespace App\Controller\PublicApi\v1;
 
@@ -14,7 +8,6 @@ use App\Helpers\BearerHelper;
 use App\Service\SecurityService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NoResultException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -66,7 +59,6 @@ class AuthController extends Controller
      * @param LoginRequest $request
      *
      * @return JsonResponse
-     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Exception
      */
     public function actionLogin(LoginRequest $request): JsonResponse
@@ -130,7 +122,7 @@ class AuthController extends Controller
         $this->dispatcher->dispatch($event::NAME, $event);
 
         $response = (new LogoutResponse())->setSuccess(
-            (new LogoutResponse_Success())
+            new LogoutResponse_Success()
         );
 
         return JsonResponse::fromJsonString($response->serializeToJsonString());

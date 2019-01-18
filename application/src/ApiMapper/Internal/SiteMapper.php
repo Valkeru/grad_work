@@ -1,10 +1,9 @@
 <?php
-
-namespace App\ApiMapper;
+namespace App\ApiMapper\Internal;
 
 use App\Entity\Domain;
 use App\Entity\Site;
-use Valkeru\PublicApi\Structures\Site as ApiSite;
+use Valkeru\PrivateApi\Structures\Site as ApiSite;
 
 class SiteMapper
 {
@@ -15,6 +14,7 @@ class SiteMapper
         $apiDomains = [];
         $apiSite->setId($site->getId())
             ->setPath($site->getPath())
+            ->setCustomer(CustomerMapper::mapCustomer($site->getCustomer()))
             ->setDomains(
                 \call_user_func(function (Site $site) use ($apiDomains) {
                     /** @var Domain $domain */

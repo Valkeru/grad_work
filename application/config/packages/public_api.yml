@@ -76,6 +76,14 @@ services:
         - '@request_stack'
         - '\Valkeru\PublicApi\Domain\AddDomainRequest'
 
+    Valkeru\PublicApi\Domain\DeleteDomainRequest:
+        factory:
+        - '@App\Factory\ApiFactory'
+        - 'makeApiRequest'
+        arguments:
+        - '@request_stack'
+        - '\Valkeru\PublicApi\Domain\DeleteDomainRequest'
+
     Valkeru\PublicApi\Domain\ListDomainsRequest:
         factory:
         - '@App\Factory\ApiFactory'
@@ -99,6 +107,14 @@ services:
         arguments:
         - '@request_stack'
         - 'Valkeru\PublicApi\Site\AddSiteRequest'
+
+    Valkeru\PublicApi\Site\DeleteSiteRequest:
+        factory:
+        - '@App\Factory\ApiFactory'
+        - 'makeApiRequest'
+        arguments:
+        - '@request_stack'
+        - 'Valkeru\PublicApi\Site\DeleteSiteRequest'
 
     Valkeru\PublicApi\Site\SiteInfoRequest:
         factory:

@@ -6,22 +6,9 @@ import "google/api/annotations.proto";
 import "valkeru/api/privateApi/structures.proto";
 
 service MailService {
-    rpc mailboxList (MailboxListRequest) returns (MailboxListResponse) {
-        option (google.api.http) = {
-            post: "/mail"
-            body: "*"
-        };
-    }
-
-    rpc mailboxInfo (MailboxInfoRequest) returns (MailboxInfoResponse) {
-        option (google.api.http) = {
-            get: "/mail/{id}"
-        };
-    }
-
     rpc addMailbox (AddMailboxRequest) returns (AddMailboxResponse) {
         option (google.api.http) = {
-            put: "/mail/new"
+            put: "/mail"
             body: "*"
         };
     }
@@ -91,10 +78,9 @@ message MailboxInfoResponse {
 }
 
 message AddMailboxRequest {
-    uint32 cust_id = 1;
+    uint32 domain_id = 1;
     string name = 2;
     string password = 3;
-    uint32 domain_id = 4;
 }
 
 message AddMailboxResponse {
@@ -114,6 +100,7 @@ message AddMailboxResponse {
         enum Code {
             _ = 0;
             DOMAIN_NOT_FOUND = 1;
+            MAILBOX_ALREADY_EXISTS = 2;
         }
     }
 }

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 19.08.18
- * Time: 15:13
- */
 
 namespace App\Controller\PublicApi\v1;
 
@@ -15,7 +9,6 @@ use App\Entity\Site;
 use App\Repository\SiteRepository;
 use App\Service\SiteService;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,6 +22,7 @@ use Valkeru\PublicApi\Site\{AddSiteRequest,
     AttachDomainRequest,
     AttachDomainResponse,
     AttachDomainResponse_Success,
+    DeleteSiteRequest,
     DeleteSiteResponse,
     DetachDomainRequest,
     DetachDomainResponse,
@@ -114,8 +108,6 @@ class SiteController extends Controller
      * @param SiteInfoRequest $request
      *
      * @return JsonResponse
-     *
-     * @throws NonUniqueResultException
      */
     public function actionInfo(SiteInfoRequest $request): JsonResponse
     {
@@ -160,19 +152,25 @@ class SiteController extends Controller
     /**
      * @Route("/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
      *
+     * @param DeleteSiteRequest $request
+     *
      * @return JsonResponse
      */
-    public function actionDelete(): JsonResponse
+    public function actionDelete(DeleteSiteRequest $request): JsonResponse
     {
         $response = new DeleteSiteResponse();
+
+        $site = $this->repository->findById($request->getId())->strict()->one();
+        $this->siteService->deleteSite($site);
 
         return JsonResponse::fromJsonString($response->serializeToJsonString());
     }
 
     /**
      * @Route("/{id}/attach-domain", requirements={"id": "\d+"}, methods={"POST"})
+     * @param AttachDomainRequest $request
+     *
      * @return JsonResponse
-     * @throws NonUniqueResultException
      */
     public function actionAttachDomain(AttachDomainRequest $request): JsonResponse
     {
@@ -199,7 +197,6 @@ class SiteController extends Controller
      * @param DetachDomainRequest $request
      *
      * @return JsonResponse
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function actionDetachDomain(DetachDomainRequest $request): JsonResponse
     {

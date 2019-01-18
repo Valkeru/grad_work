@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 27.05.18
- * Time: 23:27
- */
 
 namespace App\Controller\PublicApi\v1;
 
@@ -111,7 +105,7 @@ class RegisterController extends Controller
                 return new JsonResponse($message);
             }
 
-            return new Response(NULL, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new Response(NULL, Response::HTTP_BAD_REQUEST);
         } catch (\Exception $exception) {
             throw $exception;
         }

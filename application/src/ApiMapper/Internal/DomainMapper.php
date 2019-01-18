@@ -1,9 +1,9 @@
 <?php
 
-namespace App\ApiMapper;
+namespace App\ApiMapper\Internal;
 
 use App\Entity\Domain;
-use Valkeru\PublicApi\Structures\Domain as DomainMessage;
+use Valkeru\PrivateApi\Structures\Domain as DomainMessage;
 
 class DomainMapper
 {
@@ -13,7 +13,8 @@ class DomainMapper
 
         $domainMessage->setFqdn($domain->getFqdn())
             ->setId($domain->getId())
-            ->setIsBlocked($domain->isBlocked());
+            ->setIsBlocked($domain->isBlocked())
+            ->setCustomer(CustomerMapper::mapCustomer($domain->getCustomer()));
 
         return $domainMessage;
     }

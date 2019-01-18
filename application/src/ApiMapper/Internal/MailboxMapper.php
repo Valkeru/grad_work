@@ -1,9 +1,9 @@
 <?php
 
-namespace App\ApiMapper;
+namespace App\ApiMapper\Internal;
 
 use App\Entity\Mailbox;
-use Valkeru\PublicApi\Structures\Mailbox as ApiMailbox;
+use Valkeru\PrivateApi\Structures\Mailbox as ApiMailbox;
 
 class MailboxMapper
 {
@@ -12,6 +12,7 @@ class MailboxMapper
         $apiMailbox = new ApiMailbox;
 
         $apiMailbox->setName($mailbox->getName())
+            ->setCustomer(CustomerMapper::mapCustomer($mailbox->getDomain()->getCustomer()))
             ->setDomainId($mailbox->getDomain()->getId())
             ->setId($mailbox->getId());
 

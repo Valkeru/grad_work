@@ -1,10 +1,10 @@
 <?php
 
-namespace App\ApiMapper;
+namespace App\ApiMapper\Internal;
 
 use App\Entity\Database;
 use App\Entity\DatabaseAccess;
-use Valkeru\PublicApi\Structures\MysqlDatabase;
+use Valkeru\PrivateApi\Structures\MysqlDatabase;
 
 class MysqlDatabaseMapper
 {
@@ -13,6 +13,7 @@ class MysqlDatabaseMapper
         $mysqlDatabase = new MysqlDatabase();
 
         $mysqlDatabase->setSuffix($database->getSuffix())
+            ->setCustomer(CustomerMapper::mapCustomer($database->getCustomer()))
             ->setId($database->getId())
             ->setAllowedHosts(\call_user_func(function (Database $database) {
                 $hosts = [];

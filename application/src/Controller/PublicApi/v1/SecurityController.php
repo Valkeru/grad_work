@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 02.06.18
- * Time: 17:10
- */
 
 namespace App\Controller\PublicApi\v1;
 
@@ -74,6 +68,7 @@ class SecurityController extends Controller
      * @param TokenInfoRequest $request
      *
      * @return JsonResponse
+     * @throws \Exception
      */
     public function actionTokenInfo(TokenInfoRequest $request): JsonResponse
     {

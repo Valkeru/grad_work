@@ -1,16 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 14.08.18
- * Time: 18:31
- */
 
 namespace App\Security;
 
 use App\Entity\Customer;
 use App\Repository\CustomerRepository;
-use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -35,7 +28,7 @@ class CustomerProvider implements UserProviderInterface
     {
         try {
             return $this->repository->findByLogin($username)->strict()->one();
-        } catch (NotFoundHttpException | NonUniqueResultException $e) {
+        } catch (NotFoundHttpException $e) {
             throw new UsernameNotFoundException('User not found');
         }
     }

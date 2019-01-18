@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 02.10.18
- * Time: 11:09
- */
 
 namespace App\Service;
 
@@ -117,6 +111,7 @@ class DatabaseService
      * @return DatabaseAccess
      * @throws ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws UniqueConstraintViolationException
      */
     public function addDatabaseAccess(Database $database, string $host): DatabaseAccess
     {

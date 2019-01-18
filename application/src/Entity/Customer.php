@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 06.06.18
- * Time: 21:18
- */
 
 namespace App\Entity;
 
@@ -31,7 +25,6 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  */
 class Customer
 {
-
     /**
      * @var int
      *

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 13.07.18
- * Time: 21:21
- */
 
 namespace App\Repository;
 
@@ -20,7 +14,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  * @package App\Repository
  *
  * @method self strict()
- * @method self resetQueryBuilder()
  * @method Employee one()
  * @method Employee[] all()
  */

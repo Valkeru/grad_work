@@ -56,7 +56,7 @@ message SiteListResponse {
     }
 
     message Success {
-        repeated Site sites = 1;
+        repeated structures.Site sites = 1;
     }
 
     message Error {
@@ -187,15 +187,4 @@ message DetachDomainResponse {
             DOMAIN_NOT_FOUND = 2;
         }
     }
-}
-
-message Site {
-    uint32 id = 1;
-    string path = 2;
-    repeated Domain domains = 3;
-}
-
-message Domain {
-    uint32 id = 1;
-    string fqdn = 2;
 }

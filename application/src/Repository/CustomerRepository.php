@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 13.07.18
- * Time: 21:24
- */
 
 namespace App\Repository;
 
@@ -19,7 +13,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  * @package App\Repository
  *
  * @method $this strict()
- * @method $this resetQueryBuilder()
  * @method Customer one()
  * @method Customer[] all()
  */
@@ -43,11 +36,20 @@ class CustomerRepository extends ServiceEntityRepository
      *
      * @return CustomerRepository
      */
-    public function findByLogin(string $login): CustomerRepository
+    public function findByLogin(string $login): self
     {
         $this->qb
             ->andWhere('c.login = :login')
             ->setParameter('login', $login);
+
+        return $this;
+    }
+
+    public function findById(int $id):self
+    {
+        $this->qb
+            ->andWhere('c.id = :id')
+            ->setParameter('id', $id);
 
         return $this;
     }

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 06.06.18
- * Time: 21:18
- */
 
 namespace App\Entity;
 
@@ -105,6 +99,12 @@ class Employee
      * @ORM\Column(type="boolean", nullable=false, options={"default": false})
      */
     private $isAdmin = false;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="blocked", type="boolean", nullable=false, options={"default": false})
+     */
+    private $isBlocked = false;
 
     /**
      * @return int
@@ -295,5 +295,25 @@ class Employee
     public function __toString(): string
     {
         return $this->login;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBlocked(): bool
+    {
+        return $this->isBlocked;
+    }
+
+    /**
+     * @param bool $isBlocked
+     *
+     * @return Employee
+     */
+    public function setIsBlocked(bool $isBlocked): Employee
+    {
+        $this->isBlocked = $isBlocked;
+
+        return $this;
     }
 }

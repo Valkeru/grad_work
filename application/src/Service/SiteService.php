@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 02.10.18
- * Time: 0:59
- */
 
 namespace App\Service;
 
@@ -64,6 +58,15 @@ class SiteService
         $this->entityManager->refresh($site);
 
         return $site;
+    }
+
+    /**
+     * @param Site $site
+     */
+    public function deleteSite(Site $site): void
+    {
+        $this->entityManager->remove($site);
+        $this->entityManager->flush();
     }
 
     /**

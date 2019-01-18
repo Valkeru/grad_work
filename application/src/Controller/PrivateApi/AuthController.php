@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 02.10.18
- * Time: 17:07
- */
 
 namespace App\Controller\PrivateApi;
 
@@ -72,7 +66,6 @@ class AuthController extends Controller
      * @param LoginRequest $request
      *
      * @return JsonResponse
-     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Exception
      */
     public function actionLogin(LoginRequest $request): JsonResponse

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 03.12.18
- * Time: 22:25
- */
 
 namespace App\ApiMapper\Internal;
 

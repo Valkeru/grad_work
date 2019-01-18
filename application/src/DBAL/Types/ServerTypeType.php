@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 01.10.18
- * Time: 21:34
- */
 
 namespace App\DBAL\Types;
 

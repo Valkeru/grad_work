@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 12.06.18
- * Time: 19:26
- */
 
 namespace App\EventSubscriber;
 

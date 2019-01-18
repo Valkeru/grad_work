@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 20.08.18
- * Time: 13:57
- */
 
 namespace App\EventListener\EntityListener;
 

@@ -32,11 +32,13 @@ service CustomerService {
 
 message NewCustomerRequest {
     string login = 1;
-    string name = 2;
-    string email = 3;
-    string phone = 4;
-    bool is_blocked = 5;
-    string server_id = 6;
+    string password = 2;
+    string name = 3;
+    string surname = 4;
+    string email = 5;
+    string phone = 6;
+    bool is_blocked = 7;
+    string server_id = 8;
 
 }
 
@@ -59,12 +61,13 @@ message NewCustomerResponse {
             LOGIN_NOT_SET = 1;
             INVALID_LOGIN = 2;
             NAME_NOT_SET = 3;
-            INVALID_NAME = 4;
+            SURNAME_NOT_SET = 4;
             EMAIL_NOT_SET = 5;
             INVALID_EMAIL = 6;
             PHONE_NOT_SET = 7;
             INVALID_PHONE = 8;
             INVALID_SERVER = 9;
+            INVALID_PASSWORD = 10;
         }
     }
 }

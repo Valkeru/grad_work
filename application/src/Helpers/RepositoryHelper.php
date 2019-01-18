@@ -1,15 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 17.09.18
- * Time: 10:41
- */
 
 namespace App\Helpers;
 
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -30,13 +22,22 @@ trait RepositoryHelper
     public function one(): ?object
     {
         try {
-            return $this->qb->getQuery()->getResult()[0];
-        } catch (NoResultException $exception) {
-            if (!$this->strict) {
+            $result = $this->qb->getQuery()->getResult();
+
+            if ($result === [] || $result === NULL) {
+                if ($this->strict) {
+                    throw new NotFoundHttpException();
+                }
+
                 return NULL;
             }
 
-            throw new NotFoundHttpException();
+            if (\is_array($result)) {
+                return $result[0];
+            }
+
+            return $result;
+
         } finally {
             $this->resetQueryBuilder();
         }
@@ -63,11 +64,9 @@ trait RepositoryHelper
         return $this;
     }
 
-    public function resetQueryBuilder(): self
+    private function resetQueryBuilder(): void
     {
-        $alias    = $this->qb->getRootAlias();
+        $alias    = $this->qb->getRootAliases()[0];
         $this->qb = $this->createQueryBuilder($alias);
-
-        return $this;
     }
 }

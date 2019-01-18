@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 17.09.18
- * Time: 4:59
- */
 
 namespace App\Repository;
 
@@ -22,7 +16,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  * @method Domain|NULL one()
  * @method Domain[] all()
  * @method self strict()
- * @method self resetQueryBuilder()
  */
 class DomainRepository extends ServiceEntityRepository
 {

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 02.10.18
- * Time: 13:49
- */
 
 namespace App\Repository;
 
@@ -21,7 +15,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  * @package App\Repository
  *
  * @method self strict()
- * @method self resetQueryBuilder()
  * @method Mailbox one()
  * @method Mailbox[] all()
  */

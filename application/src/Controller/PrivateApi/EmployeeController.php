@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 12.06.18
- * Time: 23:20
- */
 
 namespace App\Controller\PrivateApi;
 
@@ -17,12 +11,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Valkeru\PrivateApi\Employee\BlockEmployeeRequest;
+use Valkeru\PrivateApi\Employee\BlockEmployeeResponse;
+use Valkeru\PrivateApi\Employee\BlockEmployeeResponse_Code;
+use Valkeru\PrivateApi\Employee\BlockEmployeeResponse_Error;
+use Valkeru\PrivateApi\Employee\BlockEmployeeResponse_Error_Code;
+use Valkeru\PrivateApi\Employee\BlockEmployeeResponse_Success;
 use Valkeru\PrivateApi\Employee\CreateEmployeeRequest;
 use Valkeru\PrivateApi\Employee\CreateEmployeeResponse;
 use Valkeru\PrivateApi\Employee\CreateEmployeeResponse_Success;
 use Valkeru\PrivateApi\Employee\EmployeeInfoRequest;
 use Valkeru\PrivateApi\Employee\EmployeeInfoResponse;
 use Valkeru\PrivateApi\Employee\EmployeeInfoResponse_Success;
+use Valkeru\PrivateApi\Employee\UnblockEmployeeResponse;
+use Valkeru\PrivateApi\Employee\UnblockEmployeeResponse_Code;
+use Valkeru\PrivateApi\Employee\UnblockEmployeeResponse_Error;
+use Valkeru\PrivateApi\Employee\UnblockEmployeeResponse_Error_Code;
+use Valkeru\PrivateApi\Employee\UnblockEmployeeResponse_Success;
 
 /**
  * Class EmployeeController
@@ -67,23 +72,73 @@ class EmployeeController extends Controller
     }
 
     /**
-     * @Route("/{id}", requirements={"id"="\d+"}, methods={"PATCH"})
+     * @Route("/{id}/block", requirements={"id"="\d+"}, methods={"POST"})
      *
-     * @return Response
+     * @param BlockEmployeeRequest $request
+     *
+     * @return JsonResponse
      */
-    public function editEmployeeAction(): Response
+    public function blockEmployeeAction(BlockEmployeeRequest $request): JsonResponse
     {
-        return new Response();
+        $response = new BlockEmployeeResponse();
+
+        $employee = $this->employeeRepository
+            ->findById($request->getId())->strict()->one();
+
+        if ($employee->isBlocked()) {
+            $response->setError(
+                (new BlockEmployeeResponse_Error())
+                ->setCode(BlockEmployeeResponse_Error_Code::ALREADY_BLOCKED)
+                ->setMessage(sprintf('Employee %s already blocked', $employee))
+            );
+        } else {
+            $employee->setIsBlocked(true);
+            $this->getDoctrine()->getManager()->persist($employee);
+            $this->getDoctrine()->getManager()->flush();
+            $this->getDoctrine()->getManager()->refresh($employee);
+
+            $response->setSuccess(
+                (new BlockEmployeeResponse_Success())
+                    ->setEmployee(EmployeeMapper::mapEmployee($employee))
+            );
+        }
+
+        return JsonResponse::fromJsonString($response->serializeToJsonString());
     }
 
     /**
-     * @Route("/{id}", requirements={"id"="\d+"}, methods={"POST"})
+     * @Route("/{id}/unblock", requirements={"id"="\d+"}, methods={"POST"})
      *
-     * @return Response
+     * @param BlockEmployeeRequest $request
+     *
+     * @return JsonResponse
      */
-    public function blockEmployeeAction(): Response
+    public function unblockEmployeeAction(BlockEmployeeRequest $request): JsonResponse
     {
-        return new Response();
+        $response = new UnblockEmployeeResponse();
+
+        $employee = $this->employeeRepository
+            ->findById($request->getId())->strict()->one();
+
+        if (!$employee->isBlocked()) {
+            $response->setError(
+                (new UnblockEmployeeResponse_Error())
+                    ->setCode(UnblockEmployeeResponse_Error_Code::NOT_BLOCKED)
+                    ->setMessage(sprintf('Employee %s is not blocked', $employee))
+            );
+        } else {
+            $employee->setIsBlocked(false);
+            $this->getDoctrine()->getManager()->persist($employee);
+            $this->getDoctrine()->getManager()->flush();
+            $this->getDoctrine()->getManager()->refresh($employee);
+
+            $response->setSuccess(
+                (new UnblockEmployeeResponse_Success())
+                    ->setEmployee(EmployeeMapper::mapEmployee($employee))
+            );
+        }
+
+        return JsonResponse::fromJsonString($response->serializeToJsonString());
     }
 
     /**
@@ -92,7 +147,6 @@ class EmployeeController extends Controller
      * @param EmployeeInfoRequest $request
      *
      * @return JsonResponse
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function employeeInfoAction(EmployeeInfoRequest $request): JsonResponse
     {

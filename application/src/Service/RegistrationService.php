@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 17.08.18
- * Time: 1:56
- */
 
 namespace App\Service;
 
@@ -12,6 +6,7 @@ use App\Entity\Customer;
 use App\Entity\Employee;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use libphonenumber\PhoneNumberUtil;
+use Valkeru\PrivateApi\Custromer\NewCustomerRequest;
 use Valkeru\PrivateApi\Employee\CreateEmployeeRequest;
 use Valkeru\PublicApi\Registration\RegistrationRequest;
 use Doctrine\ORM\{
@@ -52,9 +47,8 @@ class RegistrationService
     }
 
     /**
-     * @param RegistrationRequest $request
-     *
-     * @param bool                $isInternalRegistration
+     * @param RegistrationRequest|NewCustomerRequest $request
+     * @param bool                                   $isInternalRegistration
      *
      * @return array
      * @throws ORMException
@@ -62,7 +56,7 @@ class RegistrationService
      * @throws \libphonenumber\NumberParseException
      * @throws \Exception
      */
-    public function registerCustomer(RegistrationRequest $request, bool $isInternalRegistration = false): array
+    public function registerCustomer($request, bool $isInternalRegistration = false): array
     {
         $customer = (new Customer())
             ->setName(sprintf('%s %s', $request->getName(), $request->getSurname()))

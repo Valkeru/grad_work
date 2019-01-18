@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 02.10.18
- * Time: 5:02
- */
 
 namespace App\Controller\PublicApi\v1;
 
@@ -87,7 +81,6 @@ class MysqlController extends Controller
      * @param DatabaseInfoRequest $request
      *
      * @return JsonResponse
-     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function actionInfo(DatabaseInfoRequest $request): JsonResponse
@@ -139,7 +132,6 @@ class MysqlController extends Controller
      * @param DeleteDatabaseRequest $request
      *
      * @return Response
-     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function actionDelete(DeleteDatabaseRequest $request): Response
@@ -172,7 +164,7 @@ class MysqlController extends Controller
                 (new AddRemoteAccessResponse_Success())
                     ->setDatabase(MysqlDatabaseMapper::mapDatabase($database))
             );
-        } catch (UniqueConstraintViolationException $nonUniqueResultException) {
+        } catch (UniqueConstraintViolationException $uniqueConstraintViolationException) {
             $response->setError(
                 (new AddRemoteAccessResponse_Error())
                 ->setCode(AddRemoteAccessResponse_Error_Code::REMOTE_ACCESS_ALREADY_EXISTS)
@@ -189,7 +181,6 @@ class MysqlController extends Controller
      *
      * @return JsonResponse
      * @throws ORMException
-     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */

@@ -20,7 +20,7 @@ service MysqlService {
 
     rpc addDatabase (AddDatabaseRequest) returns (AddDatabaseResponse) {
         option (google.api.http) = {
-            put: "/mysql/new"
+            put: "/mysql"
             body: "*"
         };
     }
@@ -123,6 +123,7 @@ message AddDatabaseResponse {
 
         enum Code {
             _ = 0;
+            DATABASE_EXISTS = 1;
         }
     }
 }

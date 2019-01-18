@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 19.08.18
- * Time: 15:20
- */
 
 namespace App\Controller\PublicApi\v1;
 
@@ -76,7 +70,6 @@ class MailController extends Controller
      * @param MailboxListRequest $request
      *
      * @return JsonResponse
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function actionMailboxList(MailboxListRequest $request): JsonResponse
     {
@@ -111,7 +104,6 @@ class MailController extends Controller
      * @param AddMailboxRequest $request
      *
      * @return JsonResponse
-     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
@@ -149,7 +141,6 @@ class MailController extends Controller
      * @param DeleteMailboxRequest $request
      *
      * @return Response
-     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
@@ -168,7 +159,6 @@ class MailController extends Controller
      * @param MailboxInfoRequest $request
      *
      * @return JsonResponse
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function actionMailboxInfo(MailboxInfoRequest $request): JsonResponse
     {

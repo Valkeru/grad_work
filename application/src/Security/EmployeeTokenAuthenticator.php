@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 14.08.18
- * Time: 18:55
- */
 
 namespace App\Security;
 

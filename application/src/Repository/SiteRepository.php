@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 01.10.18
- * Time: 11:36
- */
 
 namespace App\Repository;
 
@@ -22,7 +16,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  * @method Site one()
  * @method Site[] all()
  * @method self strict()
- * @method self resetQueryBuilder()
  */
 class SiteRepository extends ServiceEntityRepository
 {

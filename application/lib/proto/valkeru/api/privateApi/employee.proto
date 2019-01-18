@@ -14,13 +14,6 @@ service EmployeeService {
         };
     }
 
-    rpc editEmployee (EditEmployeeRequest) returns (EditEmployeeResponse) {
-        option (google.api.http) = {
-            patch: "/employee/{id}"
-            body: "*"
-        };
-    }
-
     rpc blockEmployee (BlockEmployeeRequest) returns (BlockEmployeeResponse) {
         option (google.api.http) = {
             post: "/employee/{id}/block"
@@ -70,13 +63,11 @@ message CreateEmployeeResponse {
     }
 }
 
-message EditEmployeeRequest {
-    string name = 1;
-    string department = 2;
-    string position = 3;
+message BlockEmployeeRequest {
+    uint32 id = 1;
 }
 
-message EditEmployeeResponse {
+message BlockEmployeeResponse {
     oneof response {
         Success success = 1;
         Error error = 2;
@@ -89,29 +80,36 @@ message EditEmployeeResponse {
     message Error {
         Code code = 1;
         string message = 2;
-    }
 
-    enum Code {
-        _ = 0;
+        enum Code {
+            _ = 0;
+            ALREADY_BLOCKED = 1;
+        }
     }
 }
 
-message BlockEmployeeRequest {
+message UnblockEmployeeRequest {
     uint32 id = 1;
 }
 
-// Пустой ответ при успехе
-message BlockEmployeeResponse {
-    Error error = 2;
+message UnblockEmployeeResponse {
+    oneof response {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {
+        structures.Employee employee = 1;
+    }
 
     message Error {
         Code code = 1;
         string message = 2;
-    }
 
-    enum Code {
-        _ = 0;
-        ALREADY_BLOCKED = 1;
+        enum Code {
+            _ = 0;
+            NOT_BLOCKED = 1;
+        }
     }
 }
 

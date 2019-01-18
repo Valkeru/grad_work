@@ -15,6 +15,7 @@ message Employee {
     string department = 5;
     string position = 6;
     string state = 7;
+    bool is_blocked = 8;
 }
 
 message Customer {

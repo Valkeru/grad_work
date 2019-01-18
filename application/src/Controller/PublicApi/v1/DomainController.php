@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: valkeru
- * Date: 17.09.18
- * Time: 3:44
- */
 
 namespace App\Controller\PublicApi\v1;
 
@@ -15,7 +9,6 @@ use App\Repository\DomainRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -134,7 +127,6 @@ class DomainController extends Controller
      * @param DomainInfoRequest $domainInfoRequest
      *
      * @return JsonResponse
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function actionDomainInfo(DomainInfoRequest $domainInfoRequest): JsonResponse
     {
@@ -157,7 +149,6 @@ class DomainController extends Controller
      *
      * @return JsonResponse
      *
-     * @throws NonUniqueResultException
      * @throws ORMException
      */
     public function actionDelete(DeleteDomainRequest $request): JsonResponse
